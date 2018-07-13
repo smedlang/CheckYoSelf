@@ -6,9 +6,13 @@ mongoose.connect(connect);
 var userSchema = mongoose.Schema({
   name: String,
   phoneNumber: Number,
+  email: String,
   username: String,
   password: String,
-  currentEmotionColor: Number,          //will have same value as most recent Emotion Color
+  currentEmotionColor: {
+    type: Number,
+    public: Boolean
+  }          //will have same value as most recent Emotion Color
   suggestions: [],                      //will be filled with Suggestion objects
   friends: []                           //will be filled with User objects
 });
@@ -25,6 +29,7 @@ var dailyLogSchema = mongoose.Schema({
   },                          //User who owns this log
   journalBody: String,
   emotionColor: Number,
+  reasons: [],
   detailedEmotions: [{
     name: String,
     intensity: Number
