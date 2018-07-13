@@ -169,9 +169,9 @@ app.post('/:userid/reEvaluate', (req, res)=> {
     name: req.body.completedSuggestion
   }).then(result => {
     let oldAverage = result.count * result.score
-    result.count++
-    result.score = (oldAverage + score)/result.count
-    res.json({"status": 200})
+    result.count++;
+    result.score = (oldAverage + score)/result.count;
+    res.json({"status": 200});
   }).catch(err => res.json({'error': err}))
 });
 
@@ -309,12 +309,12 @@ if (!wantSuggestion){
 
 
 
-app.post("/:userid/friendRequestSend", (req, res) => {
+app.post('/:userid/friendRequestSend', (req, res) => {
   console.log('in friend request send')
   User.findOne({name: req.body.name, phoneNumber: req.body.phoneNumber})
   .then((result) => User.requestFriend(req.params.userid, result._id))
   .then(() => {
-    res.json("request sent")
+    res.json({"status": 200})
     console.log('sent!')
   })
 })
@@ -323,8 +323,7 @@ app.post("/:userid/friendRequestSend", (req, res) => {
 
 
 
-
-app.post("/:userid/friendRequestAccept", (req, res) => {
+app.post('/:userid/friendRequestAccept', (req, res) => {
   User.findOne({name: req.body.name})
   .then((result) => User.requestFriend(result._id, req.params.userid))
   .then(() => User.findById(req.params.userid))
@@ -340,9 +339,9 @@ app.post("/:userid/friendRequestAccept", (req, res) => {
 
 
 
-app.get("/:userid/getFriends", (req, res) => {
+app.get('/:userid/getFriends', (req, res) => {
   User.findById(req.params.userid)
-  .then((doc) => res.json(doc.friends))
+  .then((doc) => res.json({"friends": doc.friends})
   .catch((err) => console.log(err))
 })
 
@@ -351,10 +350,10 @@ app.get("/:userid/getFriends", (req, res) => {
 
 
 
-app.post(":userid/removeFriend", (req, res) => {
-  USer.removeFriend(req.params.userid, req.body.friend)
-  .then((doc) => res.json(doc))
-  .catch((err) => console.log(err))
+app.post('/:userid/removeFriend', (req, res) => {
+  User.removeFriend(req.params.userid, req.body.friendId)
+  .then((doc) => res.json({"friend": doc}))
+  .catch((err) => res.json({"error": err}))
 })
 
 app.listen(3000);
