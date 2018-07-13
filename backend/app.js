@@ -7,7 +7,6 @@ var mongoose= require('mongoose');
 var Models = require('./models');
 var User = Models.User;
 var DailyLog = Models.DailyLog;
-var Suggestion = Models.Suggestion;
 
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -44,6 +43,7 @@ app.post('/register', (req, res)=> {
   let password = req.body.password;
   let email = req.body.email;
   let phoneNumber = req.body.phoneNumber;
+
 
   User.findOne({username: username})
   .then(result => {
@@ -153,6 +153,8 @@ app.get('/:userid/feed', (req, res)=> {
 
 
 app.post('/:userid/reEvaluate', (req, res)=> {
+
+  //saving new detailed emotions to contrast with the old detailed emotions in Daily Log
   let newDetailedEmotions = req.body.emotions;
   let completedSuggestion = req.body.completedSuggestion;
   let score = req.body.score;
@@ -164,15 +166,29 @@ app.post('/:userid/reEvaluate', (req, res)=> {
     results[results.length-1].completedSuggestion = completedSuggestion;
     console.log(results[results.length-1]);
   }).catch(err => res.json({'error': err}));
-  Suggestion.find({
-    owner: req.params.userid,
-    name: req.body.completedSuggestion
-  }).then(result => {
-    let oldAverage = result.count * result.score
-    result.count++;
-    result.score = (oldAverage + score)/result.count;
-    res.json({"status": 200});
-  }).catch(err => res.json({'error': err}))
+
+
+  User.findbyId(req.params.userid)
+  .then(user=> {
+    user.suggestions.forEach(sug => {
+      if (sug.name === completedSuggestion){
+        let oldAverage = sug.count * sug.score
+        sug.count++;
+        sug.score = (oldAverage + score)/sug.count;
+        res.json({"status": 200});
+      }
+    })
+  })
+  .
+  // Suggestion.find({
+  //   owner: req.params.userid,
+  //   name: req.body.completedSuggestion
+  // }).then(result => {
+  //   let oldAverage = result.count * result.score
+  //   result.count++;
+  //   result.score = (oldAverage + score)/result.count;
+  //   res.json({"status": 200});
+  // }).catch(err => res.json({'error': err}))
 });
 
 
@@ -286,10 +302,11 @@ if (!wantSuggestion){
   });
 } else{
   let suggestionsByOwner = [];
-  Suggestion.find({
-    owner: userid,
-  }).then(result=> {
-    suggestionsByOwner = result;
+
+  //setting this person's suggestions to suggestionsByOwner
+  User.findById(userid)
+  .then(user=> {
+    suggestionsByOwner = user.suggestions;
   })
   .catch (err=> error= err);
   //suggestions is an array of suggestions for that User
