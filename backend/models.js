@@ -12,7 +12,7 @@ var userSchema = mongoose.Schema({
   currentEmotionColor: {
     type: Number,
     public: Boolean
-  }          //will have same value as most recent Emotion Color
+  },          //will have same value as most recent Emotion Color
   suggestions: [{
     name: String,
     description: String,
