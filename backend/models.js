@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var connect = process.env.MONGODB_URI;
 mongoose.connect(connect);
-
+var friends = require('mongoose-friends');
 
 var userSchema = mongoose.Schema({
   name: String,
@@ -23,9 +23,8 @@ var userSchema = mongoose.Schema({
   friends: []                           //will be filled with Friend objects (that contain User objects)
 });
 
+userSchema.plugin(friends());
 var User = mongoose.model('User', userSchema);
-
-
 
 
 var dailyLogSchema = mongoose.Schema({
