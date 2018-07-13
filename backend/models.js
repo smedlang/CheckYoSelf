@@ -5,7 +5,7 @@ mongoose.connect(connect);
 
 var userSchema = mongoose.Schema({
   name: String,
-  phoneNumber: Number,
+  phoneNumber: String,
   email: String,
   username: String,
   password: String,
@@ -13,11 +13,18 @@ var userSchema = mongoose.Schema({
     type: Number,
     public: Boolean
   }          //will have same value as most recent Emotion Color
-  suggestions: [],                      //will be filled with Suggestion objects
+  suggestions: [{
+    name: String,
+    description: String,
+    count: Number,
+    score: Number,
+    tags: []
+  }],                      //will be filled with Suggestion objects
   friends: []                           //will be filled with Friend objects (that contain User objects)
 });
 
 var User = mongoose.model('User', userSchema);
+
 
 
 
@@ -44,26 +51,11 @@ var dailyLogSchema = mongoose.Schema({
 
 var DailyLog = mongoose.model('DailyLog', dailyLogSchema);
 
-var suggestionSchema = mongoose.Schema({
 
-  owner: {
-    type: mongoose.Schema.ObjectId,
-    required: true,
-    ref: "User"
-  },                      //User who owns this log
-  name: String,
-  description: String,
-  count: Number,
-  score: Number,
-  tags: []                            //will be filled with one of the big 5 emotions
-});
-
-var Suggestion = mongoose.model('Suggestions', suggestionSchema);
 
 var models = {
   User: User,
-  DailyLog: DailyLog,
-  Suggestion: Suggestion
+  DailyLog: DailyLog
 };
 
 module.exports = models;
