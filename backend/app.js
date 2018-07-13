@@ -1,5 +1,5 @@
 "use strict";
-
+var _ = require('underscore');
 var express = require('express');
 var validator = require('express-validator');
 var app=express();
@@ -28,9 +28,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 /**
- - TESTED
- - registers a user by name, username, and password
- - still need to hash the password
+- TESTED
+- registers a user by name, username, and password
+- still need to hash the password
 **/
 app.post('/register', (req, res)=> {
   let name = req.body.name;
@@ -38,27 +38,37 @@ app.post('/register', (req, res)=> {
 
   //need to hash this
   let password = req.body.password;
+  let email = req.body.email;
   let phoneNumber = req.body.phoneNumber;
 
-
-  let newUser = new User({
-    name: name,
-    username: username,
-    password: password
-  });
-
-  newUser.save()
+  User.findOne({username: username})
   .then(result => {
-    console.log('OK');
-    res.json({"status": 200});
-  })
-  .catch(err => res.status(400).json({"error":err}));
+
+    if (!result) {
+      let newUser = new User({
+        name: name,
+        username: username,
+        password: password
+      });
+
+      newUser.save()
+      .then(result => {
+        console.log('OK');
+        res.json({"status": 200});
+      })
+      .catch(err => res.status(400).json({"error":err}));
+    }
+    else {
+      res.json({"error": 'username is already taken!'});
+    }
+
+  }).catch(err=> res.json({"error": err}));
 });
 
 
 /**
- - TESTED
- - logs in just by checking that the username and password are correct
+- TESTED
+- logs in just by checking that the username and password are correct
 **/
 app.post('/login', (req, res)=> {
   let username = req.body.username;
@@ -77,10 +87,9 @@ app.post('/login', (req, res)=> {
 
 
 /**
- - TESTED
- - returns name and username of the current User
+- TESTED
+- returns name and username of the current User
 **/
-
 app.get('/:userid', (req, res)=> {
   let userId = req.params.userid;
   User.findById(userId)
@@ -122,20 +131,156 @@ app.post('/:userid/reEvaluate', (req, res)=> {
 
 });
 
-app.post('/:userid/newJournal', (req, res)=> {
+/**
+- TESTED
+- returns full log with updated journal
+**/
+app.post('/:userid/addJournal', (req, res)=> {
+  let journalBody = req.body.journalBody;
+  DailyLog.find({
+    owner: req.params.userid
+  })
+  .then(results=> {
+    results[results.length-1].journalBody = journalBody;
+    console.log(results[results.length-1]);
+  }).catch(err=> res.json({"error": err}));
 
 });
 
-//expects {
-// userid: '',
-// color: '',
-// emotions: [{}],
-// reasons: ['',''],
-// wantSuggestion: true/false
 //
-// }
 app.post('/:userid/newLog', (req, res)=> {
+  let error = '';
+  let userid = req.params.userid;
+  let color = req.body.color;
+  let detailedEmotions = req.body.emotions;
+  let reasons = req.body.reasons;
+  let wantSuggestion = req.body.wantSuggestion;
 
+
+  //want Suggestion?
+  let newDailyLog = new DailyLog({
+    owner: userid,
+    journalBody: '',
+    detailedEmotions: detailedEmotions,
+    emotionColor: color,
+    reasons: reasons,
+    creationTime: new Date(),
+    completedSuggestion: wantSuggestion ? '' : 'none'
+  });
+
+  newDailyLog.save(err=> error=err);
+  console.log('saved!');
+
+  let emotionInfo = [{
+    name: "angry",
+    sum: 0,
+    items: ["angry", "irritated", "frustrated", "annoyed"]
+  },
+  {
+    name: "sad",
+    sum: 0,
+    items: ["depressed", "sad", "empty", "gloomy", "hopeless"]
+  },
+  {
+    name: "anxious",
+    sum: 0,
+    items: ["anxious", "afraid", "worried", "nervous", "panicked"]
+  },
+  {
+    name: "guilt",
+    sum: 0,
+    items: ["guilty", "remorseful", "self-conscious"]
+  },
+  {
+    name: "shame",
+    sum: 0,
+    items: ["shameful", "embarrasesed", "self-conscious"],
+  },
+  {
+    name: "happy",
+    sum: 0,
+    items: ["happy", "excited", "calm", "confident", "content", "grateful", "motivated", "proud", "peaceful", "secure"]
+  },
+];
+
+//sorting all emotions into the big 5
+detailedEmotions.forEach(emotion => {
+  _.forEach(emotionInfo, bigEmotion => {
+    if(bigEmotion.items.includes(emotion.name)) {
+      bigEmotion.sum += emotion.intensity
+    }
+  })
 });
+
+//average for each of the big 5
+emotionInfo.forEach(emotion => {
+  emotion.average = emotion.sum / emotion.items.length
+});
+
+//sort emotionInfo by highest average (highest = most experienced emotion)
+emotionInfo.sort((a, b) => (b.average - a.average));
+let e1=emotionInfo[0].name;
+let e2=emotionInfo[1].name;
+
+
+if (!wantSuggestion){
+  res.json({
+    "suggestions": [],
+    "log": newDailyLog
+  });
+} else{
+  let suggestionsByOwner = [];
+  Suggestion.find({
+    owner: userid,
+  }).then(result=> {
+    suggestionsByOwner = result;
+  })
+  .catch (err=> error= err);
+  //suggestions is an array of suggestions for that User
+  let suggestionsByEmotion = suggestionsByOwner.filter(one => one.tags.includes(e1) || one.tags.includes(e2));
+  suggestionsByEmotion.sort((a,b) => b.ranking - a.ranking);
+
+  if (error){
+    res.json({"error": error});
+  }else{
+    res.json({suggestions: suggestionsByEmotion});
+  }
+}
+});
+
+
+
+app.post("/:userid/friendRequestSend", (req, res) => {
+  console.log('in friend request send')
+  User.findOne({name: req.body.name, phoneNumber: req.body.phoneNumber})
+  .then((result) => User.requestFriend(req.params.userid, result._id))
+  .then(() => {
+    res.json("request sent")
+    console.log('sent!')
+  })
+})
+
+app.post("/:userid/friendRequestAccept", (req, res) => {
+  User.findOne({name: req.body.name})
+  .then((result) => User.requestFriend(result._id, req.params.userid))
+  .then(() => User.findById(req.params.userid))
+  .then((result) => User.getFriends(result))
+  .then((result) => {
+    var friends = result.filter(user => user.status === "accepted")
+    User.findByIdAndUpdate(req.params.userid, {friends: friends})
+  }).catch((err) => console.log(err))
+})
+
+app.get("/:userid/getFriends", (req, res) => {
+  User.findById(req.params.userid)
+  .then((doc) => res.json(doc.friends))
+  .catch((err) => console.log(err))
+})
+
+app.post(":userid/removeFriend", (req, res) => {
+  USer.removeFriend(req.params.userid, req.body.friend)
+  .then((doc) => res.json(doc))
+  .catch((err) => console.log(err))
+})
 
 app.listen(3000);
