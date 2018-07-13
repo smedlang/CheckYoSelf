@@ -16,7 +16,7 @@ var userSchema = mongoose.Schema({
 var User = mongoose.model('User', userSchema);
 
 
-//add reasons?
+//add reasons? 
 var dailyLogSchema = mongoose.Schema({
   owner: {
     type: mongoose.Schema.ObjectId,

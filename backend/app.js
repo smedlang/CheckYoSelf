@@ -40,6 +40,8 @@ app.post('/register', (req, res)=> {
   let password = req.body.password;
   let phoneNumber = req.body.phoneNumber;
 
+  User.findOne({username: username})
+  .then(result => )
 
   let newUser = new User({
     name: name,
@@ -126,16 +128,61 @@ app.post('/:userid/newJournal', (req, res)=> {
 
 });
 
-//expects {
-// userid: '',
-// color: '',
-// emotions: [{}],
-// reasons: ['',''],
-// wantSuggestion: true/false
-//
-// }
+//}
 app.post('/:userid/newLog', (req, res)=> {
+  let userid = req.params.userid;
+  let color = req.body.color;
+  let allEmotions = req.body.emotions;
+  let reasons = req.body.reasons;
+  let wantSuggestion = req.body.wantSuggestion;
+  let journalBody = req.body.journalBody;
 
+
+//want Suggestion?
+  let newDailyLog = new DailyLog({
+    owner: userid,
+    journalBody: journalBody,
+    detailedEmotions: allEmotions,
+    emotionColor: color,
+    reasons: reasons,
+    creationTime: new Date(),
+    completedSuggestion: wantSuggestion? '' : 'none'
+  });
+
+  let e1 = '';
+  let e2 = '';
+
+  newDailyLog.save(err=> res.json({"error": err}));
+
+  if (!wantSuggestion){
+    res.json({
+      "suggestions": [],
+      "log": newDailyLog
+    });
+  }else{
+    let suggestionsByOwner = [];
+    Suggestions.find({
+      owner: userid,
+    }).then(result=> {
+      suggestionsByOwner = result;
+    })
+    .catch (err=> res.json({"error": err}));
+
+    //suggestions is an array of suggestions for that User
+    let suggestionsByEmotion = suggestions.filter(one=> one.tags.includes(e1) || one.tags.includes(e2))
+
+  }
+
+
+
+  // {
+  // userid: '',
+  // color: '',
+  // emotions: [{}],
+  // reasons: ['',''],
+  // wantSuggestion: true/false
+  //
+  // }
 });
 
 app.listen(3000);
