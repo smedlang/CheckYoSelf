@@ -27,6 +27,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
+
+
+
+
 /**
 - TESTED
 - registers a user by name, username, and password
@@ -66,6 +70,9 @@ app.post('/register', (req, res)=> {
 });
 
 
+
+
+
 /**
 - TESTED
 - logs in just by checking that the username and password are correct
@@ -83,6 +90,8 @@ app.post('/login', (req, res)=> {
   })
   .catch(err => res.status(400).json({"error": err}));
 });
+
+
 
 
 
@@ -104,6 +113,10 @@ app.get('/:userid', (req, res)=> {
 });
 
 
+
+
+
+
 //finds dailyLogs by UserId, and returns all of them
 app.get('/:userid/dailyLogs', (req, res)=> {
   let userId = req.params.userid;
@@ -117,9 +130,17 @@ app.get('/:userid/dailyLogs', (req, res)=> {
 });
 
 
+
+
+
+//stats to show: total number of logs
 app.get('/:userid/stats', (req, res)=> {
 
 });
+
+
+
+
 
 
 app.get('/:userid/feed', (req, res)=> {
@@ -127,32 +148,67 @@ app.get('/:userid/feed', (req, res)=> {
 });
 
 
-app.post('/:userid/reEvaluate', (req, res)=> {
 
+
+
+
+app.post('/:userid/reEvaluate', (req, res)=> {
+  let newDetailedEmotions = req.body.emotions;
+  let completedSuggestion = req.body.completedSuggestion;
+  let score = req.body.score;
+  DailyLog.find({
+    owner: req.params.userid
+  })
+  .then(results => {
+    results[results.length-1].newDetailedEmotions = newDetailedEmotions;
+    results[results.length-1].completedSuggestion = completedSuggestion;
+    console.log(results[results.length-1]);
+  }).catch(err => res.json({'error': err}));
+  Suggestion.find({
+    owner: req.params.userid,
+    name: req.body.completedSuggestion
+  }).then(result => {
+    let oldAverage = result.count * result.score
+    result.count++
+    result.score = (oldAverage + score)/result.count
+    res.json({"status": 200})
+  }).catch(err => res.json({'error': err}))
 });
+
+
+
+
+
 
 /**
 - TESTED
-- returns full log with updated journal
+- returns log with updated journal
 **/
 app.post('/:userid/addJournal', (req, res)=> {
   let journalBody = req.body.journalBody;
   DailyLog.find({
     owner: req.params.userid
   })
-  .then(results=> {
+  .then(results => {
     results[results.length-1].journalBody = journalBody;
     console.log(results[results.length-1]);
   }).catch(err=> res.json({"error": err}));
-
 });
 
-//
-app.post('/:userid/newLog', (req, res)=> {
+
+
+
+
+
+/**
+// - TESTED
+// - returns log OR returns relevant suggestions
+**/
+app.post('/:userid/newLog', (req, res) => {
   let error = '';
   let userid = req.params.userid;
   let color = req.body.color;
-  let detailedEmotions = req.body.emotions;
+  let oldDetailedEmotions = req.body.emotions;
   let reasons = req.body.reasons;
   let wantSuggestion = req.body.wantSuggestion;
 
@@ -161,7 +217,7 @@ app.post('/:userid/newLog', (req, res)=> {
   let newDailyLog = new DailyLog({
     owner: userid,
     journalBody: '',
-    detailedEmotions: detailedEmotions,
+    oldDetailedEmotions: oldDetailedEmotions,
     emotionColor: color,
     reasons: reasons,
     creationTime: new Date(),
@@ -204,7 +260,7 @@ app.post('/:userid/newLog', (req, res)=> {
 ];
 
 //sorting all emotions into the big 5
-detailedEmotions.forEach(emotion => {
+oldDetailedEmotions.forEach(emotion => {
   _.forEach(emotionInfo, bigEmotion => {
     if(bigEmotion.items.includes(emotion.name)) {
       bigEmotion.sum += emotion.intensity
@@ -238,7 +294,7 @@ if (!wantSuggestion){
   .catch (err=> error= err);
   //suggestions is an array of suggestions for that User
   let suggestionsByEmotion = suggestionsByOwner.filter(one => one.tags.includes(e1) || one.tags.includes(e2));
-  suggestionsByEmotion.sort((a,b) => b.ranking - a.ranking);
+  suggestionsByEmotion.sort((a,b) => b.score - a.score);
 
   if (error){
     res.json({"error": error});
@@ -247,6 +303,9 @@ if (!wantSuggestion){
   }
 }
 });
+
+
+
 
 
 
@@ -260,6 +319,11 @@ app.post("/:userid/friendRequestSend", (req, res) => {
   })
 })
 
+
+
+
+
+
 app.post("/:userid/friendRequestAccept", (req, res) => {
   User.findOne({name: req.body.name})
   .then((result) => User.requestFriend(result._id, req.params.userid))
@@ -271,11 +335,21 @@ app.post("/:userid/friendRequestAccept", (req, res) => {
   }).catch((err) => console.log(err))
 })
 
+
+
+
+
+
 app.get("/:userid/getFriends", (req, res) => {
   User.findById(req.params.userid)
   .then((doc) => res.json(doc.friends))
   .catch((err) => console.log(err))
 })
+
+
+
+
+
 
 app.post(":userid/removeFriend", (req, res) => {
   USer.removeFriend(req.params.userid, req.body.friend)
