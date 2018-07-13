@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var connect = process.env.MONGODB_URI || require('./connect');
+var connect = process.env.MONGODB_URI;
 mongoose.connect(connect);
 
 
@@ -13,6 +13,8 @@ var userSchema = mongoose.Schema({
   friends: []                           //will be filled with User objects
 });
 
+var User = mongoose.model('User', userSchema);
+
 var dailyLogSchema = mongoose.Schema({
   owner: User,                          //User who owns this log
   journalBody: String,
@@ -25,19 +27,22 @@ var dailyLogSchema = mongoose.Schema({
   creationTime: Date
 });
 
+var DailyLog = mongoose.model('DailyLog', dailyLogSchema);
+
 var suggestionSchema = mongoose.Schema({
   owner: User,                         //User who owns this log
   name: String,
   description: String,
   ranking: Number,
   tags: []                            //will be filled with one of the big 5 emotions
-})
+});
 
+var Suggestion = mongoose.model('Suggestions', suggestionSchema);
 
 var models = {
-  User: mongoose.model('User', userSchema),
-  DailyLog: mongoose.model('DailyLog', dailyLogSchema),
-  Suggestion: mongoose.model('Suggestions', suggestionSchema)
+  User: User,
+  DailyLog: DailyLog,
+  Suggestion: Suggestion
 };
 
 module.exports = models;

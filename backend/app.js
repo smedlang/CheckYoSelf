@@ -4,12 +4,20 @@ var express = require('express');
 var validator = require('express-validator');
 var app=express();
 var mongoose= require('mongoose');
-var Models = require('models');
+var Models = require('./models');
 var User = Models.User;
 var DailyLog = Models.DailyLog;
 var Suggestion = Models.Suggestion;
 
-//mongoose.connect(process.env.MONGODB_URI);
+mongoose.connect(process.env.MONGODB_URI);
+
+mongoose.connection.on('connected', function() {
+  console.log('Success: connected to MongoDb!');
+});
+mongoose.connection.on('error', function() {
+  console.log('Error connecting to MongoDb. Check MONGODB_URI in env.sh');
+  process.exit(1);
+});
 
 var fs = require('fs');
 var bodyParser = require('body-parser');
@@ -95,11 +103,21 @@ app.get('/:userid/feed', (req, res)=> {
 app.post('/:userid/reEvaluate', (req, res)=> {
 
 });
+
 app.post('/:userid/newJournal', (req, res)=> {
 
 });
 
+//expects {
+// userid: '',
+// color: '',
+// emotions: [{}],
+// reasons: ['',''],
+// wantSuggestion: true/false
+//
+// }
 app.post('/:userid/newLog', (req, res)=> {
 
 });
+
 app.listen(3000);
