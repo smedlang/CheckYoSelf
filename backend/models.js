@@ -15,8 +15,14 @@ var userSchema = mongoose.Schema({
 
 var User = mongoose.model('User', userSchema);
 
+
+//add reasons? 
 var dailyLogSchema = mongoose.Schema({
-  owner: User,                          //User who owns this log
+  owner: {
+    type: mongoose.Schema.ObjectId,
+    required: true,
+    ref: "User"
+  },                          //User who owns this log
   journalBody: String,
   emotionColor: Number,
   detailedEmotions: [{
@@ -30,7 +36,12 @@ var dailyLogSchema = mongoose.Schema({
 var DailyLog = mongoose.model('DailyLog', dailyLogSchema);
 
 var suggestionSchema = mongoose.Schema({
-  owner: User,                         //User who owns this log
+
+  owner: {
+    type: mongoose.Schema.ObjectId,
+    required: true,
+    ref: "User"
+  },                      //User who owns this log
   name: String,
   description: String,
   ranking: Number,
