@@ -27,6 +27,7 @@ var User = mongoose.model('User', userSchema);
 
 
 
+
 var dailyLogSchema = mongoose.Schema({
   owner: {
     type: mongoose.Schema.ObjectId,
