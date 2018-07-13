@@ -8,6 +8,7 @@ var Models = require('./models');
 var User = Models.User;
 var DailyLog = Models.DailyLog;
 var Suggestion = Models.Suggestion;
+var friends = require('mongoose-friends')
 
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -119,5 +120,34 @@ app.post('/:userid/newJournal', (req, res)=> {
 app.post('/:userid/newLog', (req, res)=> {
 
 });
+
+app.post("/:userid/friendRequestSend", (req, res) => {
+  User.findOne({name: req.body.name, phoneNumber: req.body.phoneNumber})
+  .then((result) => User.requestFriend(req.params.userid, result._id))
+  .then(() => res.json("request sent"))
+})
+
+app.post("/:userid/friendRequestAccept", (req, res) => {
+  User.findOne({name: req.body.name})
+  .then((result) => User.requestFriend(result._id, req.params.userid))
+  .then(() => User.findById(req.params.userid))
+  .then((result) => User.getFriends(result))
+  .then((result) => {
+    var friends = result.filter(user => user.status === "accepted")
+    User.findByIdAndUpdate(req.params.userid, {friends: friends})
+  }).catch((err) => console.log(err))
+})
+
+app.get("/:userid/getFriends", (req, res) => {
+  User.findById(req.params.userid)
+  .then((doc) => res.json({friends: doc.friends}))
+  .catch((err) => console.log(err))
+})
+
+app.post("/:userid/removeFriend", (req, res) => {
+  USer.removeFriend(req.params.userid, req.body.friend)
+  .then((doc) => res.json(doc))
+  .catch((err) => console.log(err))
+})
 
 app.listen(3000);

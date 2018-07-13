@@ -39,6 +39,7 @@ var suggestionSchema = mongoose.Schema({
 
 var Suggestion = mongoose.model('Suggestions', suggestionSchema);
 
+
 var models = {
   User: User,
   DailyLog: DailyLog,
