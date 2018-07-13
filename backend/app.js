@@ -26,6 +26,12 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+
+/**
+ - TESTED
+ - registers a user by name, username, and password
+ - still need to hash the password
+**/
 app.post('/register', (req, res)=> {
   let name = req.body.name;
   let username = req.body.username;
@@ -42,11 +48,18 @@ app.post('/register', (req, res)=> {
   });
 
   newUser.save()
-  .then(result => res.status(200))
+  .then(result => {
+    console.log('OK');
+    res.json({"status": 200});
+  })
   .catch(err => res.status(400).json({"error":err}));
 });
 
 
+/**
+ - TESTED
+ - logs in just by checking that the username and password are correct
+**/
 app.post('/login', (req, res)=> {
   let username = req.body.username;
   let password = req.body.password;
@@ -54,15 +67,20 @@ app.post('/login', (req, res)=> {
   User.findOne({username: username})
   .then(result=> {
     if (result.password === password){
-      res.status(200);
+      console.log('id', result._id);
+      res.json({"status": 200});
     }
   })
   .catch(err => res.status(400).json({"error": err}));
-
 });
 
 
-//returns name and username of the current User
+
+/**
+ - TESTED
+ - returns name and username of the current User
+**/
+
 app.get('/:userid', (req, res)=> {
   let userId = req.params.userid;
   User.findById(userId)
