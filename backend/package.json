@@ -1,10 +1,10 @@
 {
   "name": "y",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,11 @@
   },
   "homepage": "https://github.com/smedlang/CheckYoSelf#readme",
   "dependencies": {
-    "express": "^4.16.3"
-  }
+    "express": "^4.16.3",
+    "express-validator": "^5.2.0",
+    "mongoose": "^5.2.3",
+    "nodemon": "^1.18.1"
+  },
+  "devDependencies": {},
+  "description": ""
 }
