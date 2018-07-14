@@ -190,6 +190,11 @@ var getMostProductiveActivity = (userId) => {
 - registers a user by name, username, and password
 - still need to hash the password
 **/
+
+app.get('/', function(req, res){
+  res.send('hello');
+})
+
 app.post('/register', (req, res)=> {
   let name = req.body.name;
   let username = req.body.username;
