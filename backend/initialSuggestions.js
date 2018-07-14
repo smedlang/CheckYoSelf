@@ -95,7 +95,7 @@
     description: 'Make sure the food fits the feeling...for example, if angry, eat something sour. If sad or anxious, have a healthy snack.',
     count: 1,
     score: 1,
-    tags: ['anxiety', 'sadness', 'eat']
+    tags: ['anxiety', 'sadness', 'anger']
   }
 ];
 

@@ -366,10 +366,11 @@ app.post('/:userid/reEvaluate', (req, res)=> {
   DailyLog.find({
     owner: req.params.userid
   }).then(results => {
+    console.log(results);
     results[results.length-1].newDetailedEmotions = newDetailedEmotions;
     results[results.length-1].completedSuggestion = completedSuggestion;
-    console.log(results[results.length-1]);
-    return
+    console.log('', results[results.length-1]);
+    return;
   }).then(() => {
     User.findById(req.params.userid)
     .then(user=> {
@@ -380,7 +381,7 @@ app.post('/:userid/reEvaluate', (req, res)=> {
           sug.score = (oldAverage + score)/sug.count;
         }
       })
-      console.log(user)
+      console.log(user);
       res.json({"status": 200});
     })
   }).catch(err => res.json({'error': err}))
@@ -462,24 +463,23 @@ app.post('/:userid/newLog', (req, res) => {
       "suggestions": [],
       "log": newDailyLog
     });
-  } else{
+  }else{
     let suggestionsByOwner = [];
 
     //setting this person's suggestions to suggestionsByOwner
     User.findById(userid)
     .then(user=> {
       suggestionsByOwner = user.suggestions;
-    })
-    .catch (err=> error= err);
-    //suggestions is an array of suggestions for that User
-    let suggestionsByEmotion = suggestionsByOwner.filter(one => one.tags.includes(e1) || one.tags.includes(e2));
-    suggestionsByEmotion.sort((a,b) => b.score - a.score);
-
-    if (error){
-      res.json({"error": error});
-    }else{
-      res.json({suggestions: suggestionsByEmotion});
-    }
+      let suggestionsByEmotion = suggestionsByOwner.filter(function(suggestion){
+        return suggestion.tags.includes(e1) || suggestion.tags.includes(e2);
+      });
+      suggestionsByEmotion.sort((a,b) => b.score - a.score);
+      if (error){
+        res.json({"error": error});
+      }else{
+        res.json({suggestions: suggestionsByEmotion});
+      }
+    }).catch (err=> error= err);
   }
 });
 

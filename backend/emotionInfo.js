@@ -1,17 +1,17 @@
 let emotionInfo = [{
-  name: "angry",
+  name: "anger",
   sum: 0,
-  items: ["angry", "irritated", "frustrated", "annoyed"]
+  items: ["anger", "irritated", "frustrated", "annoyed"]
 },
 {
-  name: "sad",
+  name: "sadness",
   sum: 0,
-  items: ["depressed", "sad", "empty", "gloomy", "hopeless"]
+  items: ["depressed", "sadness", "empty", "gloomy", "hopeless"]
 },
 {
-  name: "anxious",
+  name: "anxiety",
   sum: 0,
-  items: ["anxious", "afraid", "worried", "nervous", "panicked"]
+  items: ["anxiety", "afraid", "worried", "nervous", "panicked"]
 },
 {
   name: "guilt",
@@ -21,7 +21,7 @@ let emotionInfo = [{
 {
   name: "shame",
   sum: 0,
-  items: ["shameful", "embarrasesed", "self-conscious"],
+  items: ["shameful", "embarrassed", "self-conscious"],
 },
 {
   name: "happy",
