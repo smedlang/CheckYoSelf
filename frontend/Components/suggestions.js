@@ -21,7 +21,7 @@ export default class SuggestionsScreen extends React.Component {
       rowHasChanged: (r1, r2) => r1 !== r2
     });
     this.state={
-      renderList: []
+      renderList: [],
       physicalActivityBool: false,
       watchFunnyBool: false,
       gratitudeListBool: false,
@@ -40,17 +40,12 @@ export default class SuggestionsScreen extends React.Component {
   }
 
   componentDidMount(){
-<<<<<<< HEAD
     let suggestions = this.props.navigation.getParam('suggestions');
-=======
-
-    let suggestions = this.props.navigate.getParam('suggestions');
     //
     // fetch('')
     // .then((res)=> res.json())
     // .then((res2)=> this.setState({renderList:ds.cloneWithRows(res2)}))
 
->>>>>>> ed5a868156ae9ac3c2a1299ebf886849a455af1b
     this.setState({
       renderList: suggestions
     });

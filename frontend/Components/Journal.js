@@ -48,22 +48,22 @@ export default class Journal extends React.Component{
   }
 
   postJournal(){
-    const queryUrl = url + '/' + this.state.userid + '/newJournal'
+    const queryUrl = url + '/' + this.state.userid + '/newJournal';
     return fetch(queryUrl, {
       method: 'POST',
       body: JSON.stringify({
-        userid: '',
+        userid: this.state.userid,
         journalBody: this.state.journalBody
       })
     }).then(response=> response.json())
     .then(json => {
       if (json.status === 200){
-        Alert.alert(
-          "Great Job!",
-          "Your daily journal has been logged " ,
-          [{ text: "Done" }] // Button
-        );
         this.props.navigation.navigate('ShowNewLog', {userInfo: this.state});
+        // Alert.alert(
+        //   "Great Job!",
+        //   "Your daily journal has been logged " ,
+        //   [{ text: "Done" }] // Button
+        // );
       }
     })
   }
