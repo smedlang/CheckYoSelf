@@ -21,7 +21,6 @@
     "express-validator": "^5.2.0",
     "mongoose": "^5.2.3",
     "mongoose-friends": "^0.2.5",
-    "nodemon": "^1.18.1",
     "underscore": "^1.9.1"
   },
   "devDependencies": {},
