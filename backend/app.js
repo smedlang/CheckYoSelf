@@ -29,24 +29,25 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 /**
-  ------------------HELPER FUNCTIONS --------------
+------------------HELPER FUNCTIONS --------------
 **/
 var hashPassword = (password) => (password + process.env.SECRETHASH );
 
 //total logs
 var getLogCount = (userId) => {
-  DailyLog.find({
+  return DailyLog.find({
     owner: userId
   })
   .then(results => {
     let count = results.length
+    console.log('count is', count)
     return count;
-  }).catch(err => res.json({'error': err}))
+  }).catch(err => console.log (err));
 }
 
 //most used suggestion
 var getMostUsedSuggestion = (userId) => {
-  User.findById(userId)
+  return User.findById(userId)
   .then(user => {
     let highest = 0;
     let name = '';
@@ -56,15 +57,16 @@ var getMostUsedSuggestion = (userId) => {
         name = sug.name;
       }
     })
+    console.log('most used is', name)
     return name;
-  }).catch(err => res.json({'error': err}))
+  }).catch(err => console.log (err));
 }
 
 
 
 //most frequent detailed emotions
 var getTopEmos = (userId) => {
-  DailyLog.find({
+  return DailyLog.find({
     owner: userId
   })
   .then(logs => {
@@ -72,7 +74,7 @@ var getTopEmos = (userId) => {
     logs.forEach(log => {
       emos.concat(log.oldDetailedEmotions.name)
     })
-    counter = {}
+    let counter = {}
     emos.forEach(function(word) {
       counter[word] = (counter[word] || 0) + 1;
     });
@@ -81,8 +83,9 @@ var getTopEmos = (userId) => {
     });
     let uniqueEmos = _.unique(emos, true)
     var topEmos = uniqueEmos.slice(0, 5);
+    console.log('topEmos', topEmos);
     return topEmos;
-  }).catch(err => res.json({'error': err}))
+  }).catch(err => console.log (err));
 }
 /**
 
@@ -91,7 +94,7 @@ var getTopEmos = (userId) => {
 **/
 //most frequent reasons
 var getTopReasons = (userId) => {
-  DailyLog.find({
+  return DailyLog.find({
     owner: userId
   })
   .then(logs => {
@@ -99,7 +102,7 @@ var getTopReasons = (userId) => {
     logs.forEach(log => {
       reasons.concat(log.reasons)
     })
-    counter = {}
+    let counter = {}
     reasons.forEach(function(word) {
       counter[word] = (counter[word] || 0) + 1;
     });
@@ -108,75 +111,78 @@ var getTopReasons = (userId) => {
     });
     let uniqueReasons = _.unique(reasons, true);
     let topReasons = uniqueReasons.slice(0, 5);
+    console.log('top reasons is ', topReasons)
     return topReasons;
-  }).catch(err => res.json({'error': err}))
+  }).catch(err => console.log (err));
 }
 /**
 
 
 **/
 //most productive activity
-var getMostProductiveActivity = userId => {
+var getMostProductiveActivity = (userId) => {
   let suggestions= [];
-  User.findById(userId)
-  .then(result=> {
+  return User.findById(userId)
+  .then(result => {
     let sug = result.suggestions;
     sug.forEach(suggestion => {
       suggestions.push ({
-        name: sug.name,
+        name: suggestion.name,
         avgDelta: 0,
         count: 0
       });
-    })
-  })
-  .catch(err => console.log(err));
+    });
+    return suggestions;
+  }).then(suggestions => {
+    let happyBlock = emotionInfo[emotionInfo.length-1];
+    DailyLog.find({owner: userId})
+    .then(results => {
+      results.forEach(log => {
+        let oldHappySum = 0;
+        let oldNegSum = 0;
+        let oldDelta = 0;
+        let newHappySum = 0;
+        let newNegSum = 0;
+        let newDelta = 0;
+        let ULTIMATE_DELTA = 0;
+        log.oldDetailedEmotions.forEach(emotion => {
+          if (happyBlock.items.includes(emotion)){
+            happySum += emotion.intensity;
+          }else{
+            negSum += emotion.intensity;
+          }
+        })
 
-  let happyBlock = emotionInfo[emotionInfo.length-1];
-  DailyLog.find({owner: userId})
-  .then(results => {
-    results.forEach(log => {
-      let oldHappySum = 0;
-      let oldNegSum = 0;
-      let oldDelta = 0;
-      let newHappySum = 0;
-      let newNegSum = 0;
-      let newDelta = 0;
-      let ULTIMATE_DELTA = 0;
-      log.oldDetailedEmotions.forEach(emotion => {
-        if (happyBlock.items.includes(emotion)){
-          happySum += emotion.intensity;
-        }else{
-          negSum += emotion.intensity;
-        }
+        log.newDetailedEmotions.forEach(emotion => {
+          if (happyBlock.items.includes(emotion)){
+            happySum += emotion.intensity;
+          }else{
+            negSum += emotion.intensity;
+          }
+        })
+
+        oldDelta = oldHappySum - oldNegSum;
+        newDelta = newHappySum - newNegSum;
+        ULTIMATE_DELTA = newDelta - oldDelta;
+
+        console.log("suggestions here is " + suggestions);
+
+        let oldAvg = suggestions[log.name].avgDelta * suggestions[log.name].count;
+        suggestions[log.name].count++;
+        suggestions[log.name].avgDelta = ((oldAvg + ULTIMATE_DELTA) / suggestions[log.name].count);
+        console.log("average is " + suggestions[log.name].avgDelta);
       })
-
-      log.newDetailedEmotions.forEach(emotion => {
-        if (happyBlock.items.includes(emotion)){
-          happySum += emotion.intensity;
-        }else{
-          negSum += emotion.intensity;
-        }
-      })
-
-      oldDelta = oldHappySum - oldNegSum;
-      newDelta = newHappySum - newNegSum;
-      ULTIMATE_DELTA = newDelta - oldDelta;
-
-      let oldAvg = suggestions[log.name].avgDelta * suggestions[log.name].count;
-      suggestions[log.name].count++;
-      suggestions[log.name].avgDelta = ((oldAvg + ULTIMATE_DELTA) / suggestions[log.name].count);
     })
-  }).catch(err=>res.json({"error":err}));
 
-  console.log(suggestions);
-  suggestions.sort((a,b) =>  {
-    return b.avgDelta - a.avgDelta;
-  });
-  return suggestions[0].name;
+    suggestions.sort((a,b) => b.avgDelta - a.avgDelta);
+    console.log('most productive activity', suggestions[0].name);
+    return suggestions[0].name;
+
+  }).catch(err => console.log({"error": err}));
 }
 
 /**
-  ---------------END HELPER FUNCTIONS --------------
+---------------END HELPER FUNCTIONS --------------
 **/
 
 /**
@@ -284,16 +290,16 @@ app.get('/:userid/dailyLogs', (req, res)=> {
 
 
 //stats to show: total number of logs
-app.get('/:userid/stats', (req, res)=> {
+app.get('/:userid/stats', async (req, res) => {
   let userid = req.params.userid;
-  res.json({
-    mostProductiveActivity: getMostProductiveActivity(userid),
-    totalLogs: getLogCount(userid),
-    topEmotions: getTopEmos(userid),
-    topReasons: getTopReasons(userid),
-    mostUsedSuggestion: getMostUsedSuggestion(userid)
-  });
 
+  res.json({
+    mostProductiveActivity: await getMostProductiveActivity(userid),
+    totalLogs: await getLogCount(userid),
+    topEmotions: await getTopEmos(userid),
+    topReasons: await getTopReasons(userid),
+    mostUsedSuggestion: await getMostUsedSuggestion(userid)
+  });
 });
 
 
@@ -359,24 +365,24 @@ app.post('/:userid/reEvaluate', (req, res)=> {
 
   DailyLog.find({
     owner: req.params.userid
-  })
-  .then(results => {
+  }).then(results => {
     results[results.length-1].newDetailedEmotions = newDetailedEmotions;
     results[results.length-1].completedSuggestion = completedSuggestion;
     console.log(results[results.length-1]);
-  }).catch(err => res.json({'error': err}));
-
-  User.findById(req.params.userid)
-  .then(user=> {
-    user.suggestions.forEach(sug => {
-      if (sug.name === completedSuggestion){
-        let oldAverage = sug.count * sug.score
-        sug.count++;
-        sug.score = (oldAverage + score)/sug.count;
-      }
-    })
+    return
+  }).then(() => {
+    User.findById(req.params.userid)
+    .then(user=> {
+      user.suggestions.forEach(sug => {
+        if (sug.name === completedSuggestion){
+          let oldAverage = sug.count * sug.score
+          sug.count++;
+          sug.score = (oldAverage + score)/sug.count;
+        }
+      })
       console.log(user)
       res.json({"status": 200});
+    })
   }).catch(err => res.json({'error': err}))
 });
 
@@ -431,50 +437,50 @@ app.post('/:userid/newLog', (req, res) => {
   console.log('saved!');
 
 
-//sorting all emotions into the big 5
-oldDetailedEmotions.forEach(emotion => {
-  _.forEach(emotionInfo, bigEmotion => {
-    if(bigEmotion.items.includes(emotion.name)) {
-      bigEmotion.sum += emotion.intensity
-    }
-  })
-});
-
-//average for each of the big 5
-emotionInfo.forEach(emotion => {
-  emotion.average = emotion.sum / emotion.items.length
-});
-
-//sort emotionInfo by highest average (highest = most experienced emotion)
-emotionInfo.sort((a, b) => (b.average - a.average));
-let e1=emotionInfo[0].name;
-let e2=emotionInfo[1].name;
-
-
-if (!wantSuggestion || e1 === 'happy'){
-  res.json({
-    "suggestions": [],
-    "log": newDailyLog
+  //sorting all emotions into the big 5
+  oldDetailedEmotions.forEach(emotion => {
+    _.forEach(emotionInfo, bigEmotion => {
+      if(bigEmotion.items.includes(emotion.name)) {
+        bigEmotion.sum += emotion.intensity
+      }
+    })
   });
-} else{
-  let suggestionsByOwner = [];
 
-  //setting this person's suggestions to suggestionsByOwner
-  User.findById(userid)
-  .then(user=> {
-    suggestionsByOwner = user.suggestions;
-  })
-  .catch (err=> error= err);
-  //suggestions is an array of suggestions for that User
-  let suggestionsByEmotion = suggestionsByOwner.filter(one => one.tags.includes(e1) || one.tags.includes(e2));
-  suggestionsByEmotion.sort((a,b) => b.score - a.score);
+  //average for each of the big 5
+  emotionInfo.forEach(emotion => {
+    emotion.average = emotion.sum / emotion.items.length
+  });
 
-  if (error){
-    res.json({"error": error});
-  }else{
-    res.json({suggestions: suggestionsByEmotion});
+  //sort emotionInfo by highest average (highest = most experienced emotion)
+  emotionInfo.sort((a, b) => (b.average - a.average));
+  let e1=emotionInfo[0].name;
+  let e2=emotionInfo[1].name;
+
+
+  if (!wantSuggestion || e1 === 'happy'){
+    res.json({
+      "suggestions": [],
+      "log": newDailyLog
+    });
+  } else{
+    let suggestionsByOwner = [];
+
+    //setting this person's suggestions to suggestionsByOwner
+    User.findById(userid)
+    .then(user=> {
+      suggestionsByOwner = user.suggestions;
+    })
+    .catch (err=> error= err);
+    //suggestions is an array of suggestions for that User
+    let suggestionsByEmotion = suggestionsByOwner.filter(one => one.tags.includes(e1) || one.tags.includes(e2));
+    suggestionsByEmotion.sort((a,b) => b.score - a.score);
+
+    if (error){
+      res.json({"error": error});
+    }else{
+      res.json({suggestions: suggestionsByEmotion});
+    }
   }
-}
 });
 
 
