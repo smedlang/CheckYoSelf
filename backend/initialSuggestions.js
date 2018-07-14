@@ -76,6 +76,27 @@
     score: 1,
     tags: ['anger']
   },
+  {
+    name: 'Drinking something warm',
+    description: 'Make tea, hot milk, or hot cocoa to sip :) ',
+    count: 1,
+    score: 1,
+    tags: ['sadness', 'anxiety']
+  },
+  {
+    name: 'Grounding exercise',
+    description: 'A quick exercise to distract and calm down',
+    count: 1,
+    score: 1,
+    tags: ['anxiety']
+  },
+  {
+    name: 'Eat!',
+    description: 'Make sure the food fits the feeling...for example, if angry, eat something sour. If sad or anxious, have a healthy snack.',
+    count: 1,
+    score: 1,
+    tags: ['anxiety', 'sadness', 'eat']
+  }
 ];
 
 export default initSuggestions;
