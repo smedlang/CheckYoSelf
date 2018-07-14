@@ -1,13 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import LoginScreen from "./Components/login";
-import RegisterScreen from "./Components/register"
-import SurveyScreen from "./Components/initialSurvey"
-import HomeScreen from "./Components/home"
-import GridScreen from "./Components/grid"
-import EmotionsScreen from "./Components/emotions"
-import JournalScreen from "./Components/journal"
-import SuggestionsScreen from "./Components/suggestions"
+import RegisterScreen from "./Components/register";
+import SurveyScreen from "./Components/initialSurvey";
+import HomeScreen from "./Components/home";
+import GridScreen from "./Components/grid";
+import EmotionsScreen from "./Components/emotions";
+import JournalScreen from "./Components/journal";
+import SuggestionsScreen from "./Components/suggestions";
+import HomePageScreen from "./Components/homePageScreen";
 
 import { StackNavigator } from 'react-navigation';
 
@@ -58,6 +59,9 @@ export default StackNavigator({
   },
   Suggestions: {
     screen: SuggestionsScreen
+  },
+  HomePage: {
+    screen: HomePageScreen
   }
 }, {initialRouteName: 'Emotions'});
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import url from './url';
 import {  StyleSheet,
   View,
   Text,
@@ -25,11 +26,6 @@ export default class SurveyScreen extends React.Component {
           name: "",
           description: "",
           tags: []
-        },
-        {
-          title: "",
-          description: "",
-          tags: []
         }
       ],
       openAdd: false
@@ -47,12 +43,29 @@ export default class SurveyScreen extends React.Component {
   }
 
   registerFinal() {
+    this.props.navigation.navigate('HomePage', {userInfo: this.state});
     //fetch post a new user
     //with userInfo from state, and suggestions arr
   }
 
   addSuggestion() {
-
+    let queryUrl = url + '/' + this.props.navigation.getParam('userid') + '/addSuggestion';
+    return fetch(queryUrl, {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: this.state.name,
+        title: this.state.username,
+        description: this.state.password
+      })
+    }).then(response => response.json())
+    .then(json => {
+      if (json.status === 200){
+        //we good
+      }
+    })
   }
 
   cancelSuggestion(){

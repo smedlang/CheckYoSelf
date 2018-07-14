@@ -29,7 +29,7 @@ export default class Journal extends React.Component{
       "Your daily emotions have been logged " ,
       [{ text: "Done" }] // Button
     );
-    this.props.navigation.navigate('');
+    this.props.navigation.navigate();
 
   }
 

@@ -18,7 +18,6 @@ import {  StyleSheet,
     constructor() {
       super();
       this.state = {
-        color: -1,
         value: 4
       }
     }
@@ -33,7 +32,7 @@ import {  StyleSheet,
     continue() {
       //make sure circle slider sets color as number in state
       //pass that number when redirecting to grid
-      this.props.navigation.navigate('Grid') //, {color: this.state.color});
+      this.props.navigation.navigate('Emotions', {value: this.state.value, userid: this.props.navigation.getParam('userid')}) //, {color: this.state.color});
     }
 
     render() {

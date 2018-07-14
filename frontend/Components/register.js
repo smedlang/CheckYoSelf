@@ -19,7 +19,8 @@ export default class RegisterScreen extends React.Component {
       password: "",
       name: "",
       email: "",
-      phoneNumber: ""
+      phoneNumber: "",
+      userid: ''
     }
   }
 
@@ -32,22 +33,34 @@ export default class RegisterScreen extends React.Component {
   }
 
   onPress() {
-  //   fetch('/register', {
-  //   method: 'POST',
-  //   headers: {
-  //       "Content-Type": "application/json"
-  //   },
-  //   body: JSON.stringify({
-  //     name: this.state.name,
-  //     username: this.state.username,
-  //     password: this.state.password,
-  //     email: this.state.email,
-  //     phoneNumber: this.state.phoneNumber,
-  //   })
-  // })
-  //   .then(
-  this.props.navigation.navigate('Survey', {userInfo: this.state})
-  // );
+    let queryUrl = url + '/register';
+    return fetch(queryUrl, {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: this.state.name,
+        username: this.state.username,
+        password: this.state.password,
+        email: this.state.email,
+        phoneNumber: this.state.phoneNumber,
+      })
+    })
+    .then(response => response.json())
+    .then(json => {
+      if (json.status === 200){
+        return fetch(url + '/login')
+        .then(response=> response.json())
+        .then(json => {
+          this.setState({
+            userid: json.userid
+          })
+          this.props.navigation.navigate('Survey', {userInfo: this.state});
+
+        })
+      }
+    })
   }
 
   render() {
