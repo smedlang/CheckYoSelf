@@ -73,7 +73,8 @@ export default class SurveyScreen extends React.Component {
     console.log(this.state.userInfo)
 
     return (
-      <View style={styles.container}>
+      <View >
+        <LinearGradient style={{height:"100%"}} colors={["#7fd64d", "#4dd6ba"]} >
         {/* <Text>{this.state.userInfo}</Text> */}
         {/* <ListView
           renderRow={(suggest) => (
@@ -116,6 +117,7 @@ export default class SurveyScreen extends React.Component {
           <Text style={styles.buttonText}>Done</Text>
         </TouchableOpacity>
       </View>
+    </LinearGradient>
       </View>
 
     );
@@ -125,19 +127,14 @@ export default class SurveyScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop:100,
-    flex: 1,
-    width: "100%",
-    height: "100%",
-    backgroundColor: '#d6f2c6',
     alignItems: 'center',
     justifyContent: 'center'
   },
   suggestBox: {
-    //paddingTop:100,
     justifyContent: 'center',
     backgroundColor: '#f7ffa0',
-    alignItems: 'center'
+    alignItems: 'center',
+    borderRadius: 10
   },
   textInp: {
     margin: 15,

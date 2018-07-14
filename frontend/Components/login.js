@@ -33,8 +33,8 @@ export default class LoginScreen extends React.Component {
   }
   render() {
     return (
-      <View style={styles.container}>
-        <LinearGradient colors={["#7fd64d", "#4dd6ba"]} >
+      <View >
+         <LinearGradient style={{height: "100%"}} colors={["#80d64d", "#f5f558"]} > {/*caea54 */}
         <Text style={styles.textBig}>You Good?</Text>
         <TextInput
           style={{
@@ -58,17 +58,17 @@ export default class LoginScreen extends React.Component {
           placeholder=" Password"
           onChangeText={text => this.setState({ password: text })}
         />
-        <View style={{height:"100%"}}>
+        <View style={{alignItems: "center", borderWidth: 2}}>
         <TouchableOpacity
           onPress={() => {
             this.login();
           }}
-          style={[styles.button, styles.buttonGreen]}
+          style={styles.button}
         >
           <Text style={styles.buttonLabel}>Tap to Login</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.button, styles.buttonBlue]}
+          style={styles.button}
           onPress={() => {
             this.register();
           }}

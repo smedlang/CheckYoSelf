@@ -52,45 +52,49 @@ export default class RegisterScreen extends React.Component {
 
   render() {
     return (
-      <View >
-        <LinearGradient colors={["#7fd64d", "#4dd6ba"]} >
-          <View style={styles.container}>
-            <Text style={styles.textBig}>Register</Text>
-            <TextInput
-              style={styles.textInp}
-              placeholder=" Name"
-              onChangeText={text => this.setState({ name: text })}
-            />
-            <TextInput
-              style={styles.textInp}
-              placeholder=" Email"
-              onChangeText={text => this.setState({ email: text })}
-            />
-            <TextInput
-              style={styles.textInp}
-              placeholder=" Phone Number"
-              onChangeText={text => this.setState({ phoneNumber: text })}
-            />
-            <TextInput
-              style={styles.textInp}
-              placeholder=" Username"
-              onChangeText={text => this.setState({ username: text })}
-            />
-            <TextInput
-              style={styles.textInp}
-              placeholder=" Password"
-              onChangeText={text => this.setState({ password: text })}
-            />
-            <View>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={this.onPress.bind(this)}
-              >
-
-                <Text style={styles.buttonLabel}>Register</Text>
-              </TouchableOpacity>
-          </View>
+      <View>
+        <LinearGradient style={{height:"100%"}} colors={["#7fd64d", "#4dd6ba"]} >
+          <View style={{height: "20%", alignItems: "center", justifyContent: "center"}}>
+        <Text style={styles.textBig}>Register</Text>
         </View>
+        <View style={{height: "50%", alignItems: "center"}}>
+        <TextInput
+          style={styles.textInp}
+          placeholder=" Name"
+          onChangeText={text => this.setState({ name: text })}
+        />
+        <TextInput
+          style={styles.textInp}
+          placeholder=" Email"
+          onChangeText={text => this.setState({ email: text })}
+        />
+        <TextInput
+          style={styles.textInp}
+          placeholder=" Phone Number"
+          onChangeText={text => this.setState({ phoneNumber: text })}
+        />
+        <TextInput
+          style={styles.textInp}
+          placeholder=" Username"
+          onChangeText={text => this.setState({ username: text })}
+        />
+        <TextInput
+          style={styles.textInp}
+          placeholder=" Password"
+          onChangeText={text => this.setState({ password: text })}
+        />
+      </View>
+        <View style={{alignItems: 'center', height: "30%"}}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={this.onPress.bind(this)}
+        >
+
+          <Text style={styles.buttonLabel}>Register</Text>
+        </TouchableOpacity>
+
+      </View>
+
     </LinearGradient>
     </View>
     );
@@ -99,10 +103,9 @@ export default class RegisterScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    height: "100%",
-    paddingTop:100,
-    flex: 1,
-    //backgroundColor: '#d6f2c6',
+        //paddingTop:100,
+    //flex: 1,
+    // backgroundColor: '#d6f2c6',
     alignItems: 'center',
     // justifyContent: 'center',
   },
@@ -113,8 +116,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Cochin'
   },
   button: {
-    alignItems: 'center',
-    alignSelf: 'stretch',
     paddingTop: 10,
     paddingBottom: 10,
     marginTop: 10,
@@ -132,7 +133,8 @@ const styles = StyleSheet.create({
     width: 300,
     height: 40,
     borderColor: "#97ad8a",
-    borderWidth: 2
+    borderWidth: 2,
+    backgroundColor: 'white'
   }
 
 });
