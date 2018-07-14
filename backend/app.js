@@ -557,4 +557,5 @@ app.post('/:userid/removeFriend', (req, res) => {
 })
 
 var port = process.env.PORT || 3000;
+console.log('Server running at http://localhost:%d/', port);
 app.listen(port);
