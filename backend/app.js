@@ -556,4 +556,5 @@ app.post('/:userid/removeFriend', (req, res) => {
   .catch(err => res.json({"error": err}))
 })
 
-app.listen(3000);
+var port = process.env.PORT || 18946;
+app.listen(port);
