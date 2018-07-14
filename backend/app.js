@@ -165,7 +165,8 @@ app.post('/:userid/addSuggestion', (req, res) => {
       count: 1,
       score: 1,
       tags: tags
-    })
+    });
+    res.json({"status": 200});
   }).catch(err => res.json({'error': err}))
 })
 
@@ -182,7 +183,8 @@ app.post('/:userid/deleteSuggestion', (req, res) => {
 
   User.findById(userid)
   .then(result => {
-    results.suggestions = results.suggestions.filter(sug => sug.name !== suggestionToDelete)
+    results.suggestions = results.suggestions.filter(sug => sug.name !== suggestionToDelete);
+    res.json({"status": 200});
   }).catch(err=> res.json({"error": err}));
 })
 
@@ -366,10 +368,12 @@ if (!wantSuggestion){
 
 
 
-//friend stuff
-//
-//
-//
+/**
+
+  FRIEND STUFF
+
+ **/
+
 app.post('/:userid/friendRequestSend', (req, res) => {
   console.log('in friend request send')
   User.findOne({name: req.body.name, phoneNumber: req.body.phoneNumber})
