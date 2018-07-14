@@ -129,12 +129,19 @@ class SubScreen extends React.Component{
     });
     return(
       <View>
-        <View style={{height: 80, borderWidth: 1, borderColor: 'grey'}}>
-          {this.props.positive ? <Text>Positive</Text> : <Text>Negative</Text>}
+        <LinearGradient style={{height:"100%"}} colors={["#1049cc", "#00B0B0"]}
+        <View style={{height: 80}}>
+          {this.props.positive ?
+            <View style={{alignItems:"center", justifyContent:"center", paddingTop:15}}>
+            <Text style={{color:"white", fontFamily: "Cochin", fontSize: 40}}>Positive</Text>
+            </View>
+            :
+            <View style={{alignItems:"center", justifyContent:"center", paddingTop:15}}>
+            <Text style={{color:"white", fontFamily: "Cochin", fontSize: 40}}>Negative</Text>
+            </View>
+          }
         </View>
-        <TouchableOpacity style={{}} onPress={() => this.props.setParent(this.state.emotionsObjs, this.props.positive)}>
-          <Text style={{fontSize: 16, textAlign: 'center'}}>I'm Done</Text>
-        </TouchableOpacity>
+
         <ListView
           dataSource={ds.cloneWithRows(Object.keys(this.state.emotionsObjs))}
           renderRow={rowData => {
@@ -159,7 +166,10 @@ class SubScreen extends React.Component{
         }
 
         />
-
+        <TouchableOpacity style={{height:"13%", alignItems:"center", justifyContent:"center"}} onPress={() => this.props.setParent(this.state.emotionsObjs, this.props.positive)}>
+          <Text style={{fontSize: 20, textAlign: 'center', color:"white", fontFamily:"Cochin"}}>I'm Done</Text>
+        </TouchableOpacity>
+      </LinearGradient>
       </View>
     )
   }
@@ -181,9 +191,9 @@ class SubScreen extends React.Component{
 
   const styles = StyleSheet.create({
     sliderBox: {
+      paddingTop: 15,
       height: 80,
       width: "100%",
-      backgroundColor: 'blue',
       alignItems: 'center'
     },
     Title: {
