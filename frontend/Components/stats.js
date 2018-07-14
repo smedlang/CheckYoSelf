@@ -13,6 +13,7 @@ import {  StyleSheet,
   import { Slider } from 'react-native-elements';
   //import CircularSlider from "react-native-circular-slider"
   //"react-native" link "react-native-svg"
+import URL from './url.js'
 
   export default class HomeScreen extends React.Component {
     constructor() {
@@ -29,17 +30,17 @@ import {  StyleSheet,
 
 
     componentDidMount(){
-      fetch(URL + '/:userid/stats')
+      fetch(URL + '/' + this.props.userId + '/stats')
       .then(response => response.json())
       .then(responseJson => {
         this.setState({
-          emotions: topEmotions,
-          reasons: topReasons,
-          most_used: mostUsedSuggestion,
-          most_freq: mostProductiveActivity,
-          total_logs: totalLogs
+          emotions: responseJson.topEmotions,
+          reasons: responseJson.topReasons,
+          most_used: responseJson.mostUsedSuggestion,
+          most_freq: responseJson.mostProductiveActivity,
+          total_logs: responseJson.totalLogs
         })
-      })
+      }).catch(err => res.status(400).json({"error": err}));
       var score = 0;
       var happyArr = ["happy", "excited", "calm", "confident", "content", "grateful", "motivated", "proud", "peaceful", "secure"]
       topEmotions.forEach(emotion => {
