@@ -94,6 +94,7 @@ var getMostUsedSuggestion = (userId) => {
 }
 
 
+
 //most frequent detailed emotions
 var getTopEmos = (userId) => {
   DailyLog.find({
