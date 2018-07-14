@@ -18,8 +18,8 @@ import {  StyleSheet,
     constructor() {
       super();
       this.state = {
-        color: -1,
-        value: 4
+        value: 4,
+        userid: ''
       }
     }
 
@@ -30,10 +30,17 @@ import {  StyleSheet,
       this.props.navigation.navigate('Login');
     }
 
+    componentDidMount(){
+      let userInfo = this.props.navigate.getParam('userInfo');
+      this.setState({
+        userid: userInfo.userid
+      });
+    }
+
     continue() {
       //make sure circle slider sets color as number in state
       //pass that number when redirecting to grid
-      this.props.navigation.navigate('Grid') //, {color: this.state.color});
+      this.props.navigation.navigate('Emotions', {userInfo: this.state}) //, {color: this.state.color});
     }
 
     render() {

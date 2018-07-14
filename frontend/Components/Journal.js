@@ -18,9 +18,22 @@ export default class Journal extends React.Component{
     super(props);
 
     this.state= {
-      journalBody: ''
+      journalBody: '',
+      userid: '',
+      value: '',
+      emotions: [],
+      selected: []
     }
 
+  }
+  componentDidMount(){
+    let userInfo = this.props.navigate.getParam('userInfo');
+    this.setState({
+      userid: userInfo.userid,
+      value: userInfo.value,
+      selected: userInfo.selected,
+      emotions: userInfo.emotions
+    });
   }
 
   skipSection(){
@@ -29,12 +42,12 @@ export default class Journal extends React.Component{
       "Your daily emotions have been logged " ,
       [{ text: "Done" }] // Button
     );
-    this.props.navigation.navigate();
+    this.props.navigation.navigate('Suggestions', {userInfo: this.state});
 
   }
 
   postJournal(){
-    const queryUrl = '/:userid/newJournal'
+    const queryUrl = url + '/' + this.state.userid + '/newJournal'
     return fetch(queryUrl, {
       method: 'POST',
       body: JSON.stringify({
@@ -49,7 +62,7 @@ export default class Journal extends React.Component{
           "Your daily journal has been logged " ,
           [{ text: "Done" }] // Button
         );
-        this.props.navigation.navigate('/:userid/suggestions');
+        this.props.navigation.navigate('ShowNewLog', {userInfo: this.state});
       }
     })
   }

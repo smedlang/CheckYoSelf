@@ -1,4 +1,5 @@
 import React from 'react';
+import url from './url';
 import {
   StyleSheet,
   View,
@@ -13,9 +14,9 @@ import {
 } from "react-native"
 import { LinearGradient } from "expo";
 
-export default class SuggestionsScreen extends React.Component {
-  constructor(){
-    super();
+export default class SuggestionsScreen extends React.Compnent {
+  constructor(props){
+    super(props);
     const ds = new ListView.DataSouce({
       rowHasChanged: (r1, r2) => r1 !== r2
     });
@@ -26,6 +27,13 @@ export default class SuggestionsScreen extends React.Component {
     this.state={
       renderList: []
     }
+  }
+
+  componentDidMount(){
+    let suggestions = this.props.navigate.getParam('suggestions');
+    this.setState({
+      renderList: suggestions
+    });
   }
 
   render(){

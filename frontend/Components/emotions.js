@@ -1,4 +1,5 @@
 import React from 'react';
+import url from './url';
 import {  StyleSheet,
   View,
   Text,
@@ -37,22 +38,37 @@ import {  StyleSheet,
         positiveArr: [],
         negativeArr: [],
         positivesSet: false,
-        negativesSet: false
+        negativesSet: false,
+        userid: '',
+        value: ''
+
       }
     }
 
     componentDidMount() {
+      let userInfo = this.props.navigate.getParams('userInfo');
+
       this.props.navigation.setParams({
         onRightPress: this.setParents.bind(this)
+      }).then(response=> {
+        this.setState({
+          userid: userInfo.userid,
+          value: userInfo.value
+        });
       })
     }
 
     setParents() {
       console.log("setParents")
       if (this.state.positivesSet && this.state.negativesSet) {
-        let finalArr = this.state.positiveArr.concat(this.state.negativeArr)
-        console.log('setparents', finalArr)
-        //fetch post based
+        let finalArr = this.state.positiveArr.concat(this.state.negativeArr);
+        console.log('setparents', finalArr);
+        let userInfo = {
+          userid: this.state.userid,
+          emotions: finalArr,
+          value: this.state.value
+        }
+        this.props.navigation.navigate('Grid', {userInfo: userInfo}); //, {color: this.state.color});
       }
       else { //user clicked all done without finishing both
         console.log('cannot post emotions sliders because positives or negatives have not been sent')

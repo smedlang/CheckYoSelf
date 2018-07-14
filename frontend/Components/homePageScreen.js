@@ -19,7 +19,8 @@ export default class Homepage extends React.Component{
     super();
     this.state={
       name: '',
-      username: ''
+      username: '',
+      userid: ''
     }
   }
   toNew(){

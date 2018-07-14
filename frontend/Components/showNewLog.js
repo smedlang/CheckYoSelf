@@ -17,7 +17,11 @@ export default class ShowNewlog extends React.Component{
   constructor(){
     super();
     this.state={
-      userInfo: this.props.navigation.getParam("userInfo"),
+      userid: '',
+      value: '',
+      emotions: [],
+      selected: [],
+      journalBody: '',
       wantSuggestion: false
     }
   }
@@ -32,7 +36,7 @@ export default class ShowNewlog extends React.Component{
     this.props.navigation.navigate("HomePage");
   }
   postLog(logInfo){
-    let queryUrl = url + '/' //+ route to be implemented
+    let queryUrl = url + '/' + this.state.userid + '/newLog' //+ route to be implemented
     return fetch(queryUrl, {
       method: "POST",
       headers: {
@@ -47,7 +51,26 @@ export default class ShowNewlog extends React.Component{
         journalBody: logInfo.userInfo.journalBody
       })
     })
-    .then
+    .then(response=> response.json())
+    .then(json=> {
+      if (json.suggestions){
+        this.props.navigation.navigate('Suggestions', {suggestions: json.suggestions});
+      }else{
+        this.props.navigation.navigate('HomePage');
+      }
+    })
+  }
+
+  componentDidMount(){
+    let userInfo = this.props.navigate.getParam('userInfo');
+    this.setState({
+      userid: userInfo.userid,
+      value: userInfo.value,
+      emotions: userInfo.emotions,
+      selected: userInfo.selected,
+      journalBody: userInfo.journalBody,
+    });
+
   }
   render(){
     return(
@@ -62,7 +85,7 @@ export default class ShowNewlog extends React.Component{
       </View>
       <View><Text>Would you like to see activities?</Text></View>
       <View><TouchableOpacity onPress={()=this.yesActivity()}><Text>Yes</Text></TouchableOpacity></View>
-      <View><TouchableOpacity onPress={()=this.noActivity()}><Text>Yes</Text></TouchableOpacity></View>
+      <View><TouchableOpacity onPress={()=this.noActivity()}><Text>No</Text></TouchableOpacity></View>
       </LinearGradient>
       </View
     )

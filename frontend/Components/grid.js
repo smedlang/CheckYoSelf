@@ -13,10 +13,21 @@ import { Icon } from 'react-native-elements';
 import { LinearGradient } from 'expo';
 
   export default class GridScreen extends React.Component {
+    static navigationOptions = ({ navigation }) => ({
+      headerRight:
+        <Button
+          title="Next"
+          onPress={ () => {this.props.navigation.navigate('Journal', {userInfo: this.state})} }
+        />
+    })
+
     constructor(){
       super();
       this.state = {
         selected: [],
+        userid: '',
+        value: '',
+        emotions: []
       }
     }
 
@@ -29,6 +40,15 @@ import { LinearGradient } from 'expo';
 
       this.setState({selected: arr}, () => console.log(this.state.selected));
 
+    }
+
+    componentDidMount(){
+      let userInfo = this.props.navigate.getParam('userInfo');
+      this.setState({
+        userid: userInfo.userid,
+        value: userInfo.value,
+        emotions: userInfo.emotions
+      });
     }
 
 
@@ -75,7 +95,6 @@ import { LinearGradient } from 'expo';
   export class FullIcon extends React.Component {
     constructor(props){
       super(props);
-
     }
 
 
