@@ -29,6 +29,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
+var removeDups = (arr) => {
+  for (let i=1; i<arr.length; i++){
+    if (arr[i] === arr[i-1]){
+      arr.splice(i-1, 1);
+    }
+  }
+}
+
 function hashPassword(password){
   return password + process.env.SECRETHASH;
 }
@@ -143,9 +151,9 @@ app.get('/:userid/dailyLogs', (req, res)=> {
 app.get('/:userid/stats', (req, res)=> {
   // most used suggestions DONE
   // total logs DONE
-  // most frequent detailed emotions selected (top 5)
+  // most frequent detailed emotions selected (top 5) DONE
   // most productive activity (best delta per activity)
-  // things that affect your emotions
+  // most frequent life aspects affecting your emotions
 });
 
 
@@ -165,27 +173,28 @@ var getMostUsedSuggestion = (userId) => {
   User.findById(userId)
   .then(user => {
     let highest = 0;
+    let name = '';
     user.suggestions.forEach(sug => {
       if(sug.count > highest){
-        highest = sug.count
+        highest = sug.count;
+        name = sug.name;
       }
     })
-    return highest;
+    return name;
   }).catch(err => res.json({'error': err}))
 }
 
 
 //most frequent detailed emotions
-var gotEmoCounts = (userId) => {
+var topEmos = (userId) => {
   DailyLog.find({
     owner: userId
   })
   .then(logs => {
     let emos = [];
     logs.forEach(log => {
-      emos.concat(log.oldDetailedEmotions)
+      emos.concat(log.oldDetailedEmotions.name)
     })
-
     counter = {}
     emos.forEach(function(word) {
       counter[word] = (counter[word] || 0) + 1;
@@ -193,8 +202,33 @@ var gotEmoCounts = (userId) => {
     emos.sort(function(x, y) {
       return counter[y] - counter[x];
     });
+    removeDups(emos);
+    var topEmos = emos.slice(0, 5);
+    return topEmos;
+  }).catch(err => res.json({'error': err}))
+}
 
+
+var topReasons = (userId) => {
+  DailyLog.find({
+    owner: userId
   })
+  .then(logs => {
+    let reasons = [];
+    logs.forEach(log => {
+      reasons.concat(log.reasons)
+    })
+    counter = {}
+    reasons.forEach(function(word) {
+      counter[word] = (counter[word] || 0) + 1;
+    });
+    reasons.sort(function(x, y) {
+      return counter[y] - counter[x];
+    });
+    removeDups(reasons);
+    var topReasons = reasons.slice(0, 5);
+    return topReasons;
+  }).catch(err => res.json({'error': err}))
 }
 
 
