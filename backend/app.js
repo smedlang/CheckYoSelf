@@ -114,8 +114,6 @@ var getTopReasons = (userId) => {
 /**
 
 
-
-
 **/
 //most productive activity
 var getMostProductiveActivity = userId => {
@@ -133,7 +131,7 @@ var getMostProductiveActivity = userId => {
   })
   .catch(err => console.log(err));
 
-  let happyBlock = motionInfo[emotionInfo.length-1];
+  let happyBlock = emotionInfo[emotionInfo.length-1];
   DailyLog.find({owner: userId})
   .then(results => {
     results.forEach(log => {
@@ -166,17 +164,15 @@ var getMostProductiveActivity = userId => {
 
       let oldAvg = suggestions[log.name].avgDelta * suggestions[log.name].count;
       suggestions[log.name].count++;
-
-      suggestions[log.name].avgDelta = (oldAvg + ULTIMATE_DELTA) /suggestions[log.name].count;
+      suggestions[log.name].avgDelta = ((oldAvg + ULTIMATE_DELTA) / suggestions[log.name].count);
     })
-  })
+  }).catch(err=>res.json({"error":err}));
 
-  suggestions.sort((a,b) =>
-    b.avgDelta - a.avgDelta
+  console.log(suggestions);
+  suggestions.sort((a,b) =>  {
+    return b.avgDelta - a.avgDelta;
   });
-
   return suggestions[0].name;
-
 }
 
 /**
@@ -212,7 +208,7 @@ app.post('/register', (req, res)=> {
 
       newUser.save()
       .then(result => {
-        console.log('OK');
+        console.log(result);
         res.json({"status": 200});
       })
       .catch(err => res.status(400).json({"error":err}));
@@ -289,7 +285,6 @@ app.get('/:userid/dailyLogs', (req, res)=> {
 
 //stats to show: total number of logs
 app.get('/:userid/stats', (req, res)=> {
-
   let userid = req.params.userid;
   res.json({
     mostProductiveActivity: getMostProductiveActivity(userid),
@@ -299,28 +294,21 @@ app.get('/:userid/stats', (req, res)=> {
     mostUsedSuggestion: getMostUsedSuggestion(userid)
   });
 
-  // most used suggestions DONE
-  // total logs DONE
-  // most frequent detailed emotions selected (top 5) DONE
-  // most productive activity (best delta per activity)
-          //find all logs for userId
-          //sort by activity name
-          //
-  // most frequent life aspects affecting your emotions DONE
 });
 
 
-//total logs
 
 
-//add suggestion
+/** Tested
+//add suggestion to suggestion array
+**/
 app.post('/:userid/addSuggestion', (req, res) => {
   let userid = req.params.userid;
   let name = req.body.name;
   let description = req.body.description;
   let tags = req.body.tags;
 
-  User.findbyId(userid)
+  User.findById(userid)
   .then(user => {
     let sugs = user.suggestions;
     sugs.push({
@@ -330,6 +318,7 @@ app.post('/:userid/addSuggestion', (req, res) => {
       score: 1,
       tags: tags
     });
+    console.log(sugs)
     res.json({"status": 200});
   }).catch(err => res.json({'error': err}))
 })
@@ -338,14 +327,17 @@ app.post('/:userid/addSuggestion', (req, res) => {
 
 
 
-//delete suggestion
+/** Tested
+//delete suggestion from suggestion array
+**/
 app.post('/:userid/deleteSuggestion', (req, res) => {
   let suggestionToDelete = req.body.suggestion;
   let userid = req.params.userid;
 
   User.findById(userid)
   .then(result => {
-    results.suggestions = results.suggestions.filter(sug => sug.name !== suggestionToDelete);
+    result.suggestions = result.suggestions.filter(sug => sug.name !== suggestionToDelete);
+    console.log(result.suggestions)
     res.json({"status": 200});
   }).catch(err=> res.json({"error": err}));
 })
@@ -364,6 +356,7 @@ app.post('/:userid/reEvaluate', (req, res)=> {
   let newDetailedEmotions = req.body.emotions;
   let completedSuggestion = req.body.completedSuggestion;
   let score = req.body.score;
+
   DailyLog.find({
     owner: req.params.userid
   })
@@ -373,18 +366,18 @@ app.post('/:userid/reEvaluate', (req, res)=> {
     console.log(results[results.length-1]);
   }).catch(err => res.json({'error': err}));
 
-
-  User.findbyId(req.params.userid)
+  User.findById(req.params.userid)
   .then(user=> {
     user.suggestions.forEach(sug => {
       if (sug.name === completedSuggestion){
         let oldAverage = sug.count * sug.score
         sug.count++;
         sug.score = (oldAverage + score)/sug.count;
-        res.json({"status": 200});
       }
     })
-  })
+      console.log(user)
+      res.json({"status": 200});
+  }).catch(err => res.json({'error': err}))
 });
 
 
