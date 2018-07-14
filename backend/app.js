@@ -7,6 +7,9 @@ var mongoose= require('mongoose');
 var Models = require('./models');
 var User = Models.User;
 var DailyLog = Models.DailyLog;
+var initialSuggestions = require('./initialSuggestions').initialSuggestions;
+
+console.log(initialSuggestions);
 
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -54,7 +57,8 @@ app.post('/register', (req, res)=> {
       let newUser = new User({
         name: name,
         username: username,
-        password: password
+        password: password,
+        suggestions: initialSuggestions
       });
 
       newUser.save()
@@ -70,8 +74,6 @@ app.post('/register', (req, res)=> {
 
   }).catch(err=> res.json({"error": err}));
 });
-
-
 
 
 

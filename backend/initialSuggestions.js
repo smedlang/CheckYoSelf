@@ -1,5 +1,5 @@
 
-  let initSuggestions = [{
+  let initialSuggestions = [{
     name: 'Physical activity',
     description: 'Go on a run, do a quick workout at home, or head to the gym!',
     count: 1,
@@ -99,4 +99,6 @@
   }
 ];
 
-export default initSuggestions;
+module.exports = {
+  initialSuggestions: initialSuggestions
+};
