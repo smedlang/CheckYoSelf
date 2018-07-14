@@ -9,10 +9,12 @@ import {  StyleSheet,
   Button,
   RefreshControl,
   AsyncStorage } from 'react-native';
+import { StackNavigator } from 'react-navigation';
+import { LinearGradient } from 'expo';
 
 export default class LoginScreen extends React.Component {
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     this.state={
       username: "",
       password: ""
@@ -26,15 +28,13 @@ export default class LoginScreen extends React.Component {
 );
   }
   register(){
-    Alert.alert(
-  "Register",
-  "Register button pressed!",
-  [{ text: "yay" }] // Button
-);
+
+    this.props.navigation.navigate('Register');
   }
   render() {
     return (
       <View style={styles.container}>
+        <LinearGradient colors={["#7fd64d", "#4dd6ba"]} >
         <Text style={styles.textBig}>You Good?</Text>
         <TextInput
           style={{
@@ -58,6 +58,7 @@ export default class LoginScreen extends React.Component {
           placeholder=" Password"
           onChangeText={text => this.setState({ password: text })}
         />
+        <View style={{height:"100%"}}>
         <TouchableOpacity
           onPress={() => {
             this.login();
@@ -75,33 +76,35 @@ export default class LoginScreen extends React.Component {
           <Text style={styles.buttonLabel}>Tap to Register</Text>
         </TouchableOpacity>
       </View>
+    </LinearGradient>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop:100,
     flex: 1,
-    width: 400,
     backgroundColor: '#d6f2c6',
     alignItems: 'center',
-    justifyContent: 'center',
   },
   textBig: {
     fontSize: 36,
     textAlign: 'center',
     margin: 10,
+    fontFamily: 'Cochin'
   },
   button: {
+    alignItems: 'center',
     alignSelf: 'stretch',
     paddingTop: 10,
     paddingBottom: 10,
     marginTop: 10,
-    marginLeft: 5,
-    marginRight: 5,
     borderRadius: 5,
     borderWidth: 1,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    width: 200
   },
   buttonLabel: {
     textAlign: 'center',
