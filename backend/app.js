@@ -477,7 +477,15 @@ app.post('/:userid/newLog', (req, res) => {
       if (error){
         res.json({"error": error});
       }else{
-        res.json({suggestions: suggestionsByEmotion});
+        suggestionsByEmotion = suggestionsByEmotion.map((sug)=> {
+          return {
+            name: sug.name,
+            description: sug.description
+          }
+        });
+        res.json({
+          suggestion: suggestionsByEmotion
+        });
       }
     }).catch (err=> error= err);
   }
