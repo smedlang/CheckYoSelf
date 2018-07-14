@@ -290,6 +290,15 @@ app.get('/:userid/dailyLogs', (req, res)=> {
 //stats to show: total number of logs
 app.get('/:userid/stats', (req, res)=> {
 
+  let userid = req.params.userid;
+  res.json({
+    mostProductiveActivity: getMostProductiveActivity(userid),
+    totalLogs: getLogCount(userid),
+    topEmotions: getTopEmos(userid),
+    topReasons: getTopReasons(userid),
+    mostUsedSuggestion: getMostUsedSuggestion(userid)
+  });
+
   // most used suggestions DONE
   // total logs DONE
   // most frequent detailed emotions selected (top 5) DONE
@@ -415,8 +424,6 @@ app.post('/:userid/newLog', (req, res) => {
   let reasons = req.body.reasons;
   let wantSuggestion = req.body.wantSuggestion;
 
-
-  //want Suggestion?
   let newDailyLog = new DailyLog({
     owner: userid,
     journalBody: '',
