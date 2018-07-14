@@ -14,23 +14,23 @@ import {
 } from "react-native"
 import { LinearGradient } from "expo";
 
-export default class SuggestionsScreen extends React.Compnent {
+export default class SuggestionsScreen extends React.Component {
   constructor(props){
     super(props);
     const ds = new ListView.DataSouce({
       rowHasChanged: (r1, r2) => r1 !== r2
     });
 
-    fetch('')
-    .then((res)=> res.json())
-    .then((res2)=> this.setState({renderList:ds.cloneWithRows(res2)}))
+    // fetch('')
+    // .then((res)=> res.json())
+    // .then((res2)=> this.setState({renderList:ds.cloneWithRows(res2)}))
     this.state={
       renderList: []
     }
   }
 
   componentDidMount(){
-    let suggestions = this.props.navigate.getParam('suggestions');
+    let suggestions = this.props.navigation.getParam('suggestions');
     this.setState({
       renderList: suggestions
     });

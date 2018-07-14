@@ -18,7 +18,7 @@ import { LinearGradient } from 'expo';
       headerRight:
         <Button
           title="Next"
-          onPress={ () => {this.props.navigation.navigate('Journal', {userInfo: this.state})} }
+          onPress={ () => this.props.navigation.navigate('Journal', {userInfo: this.state}) }
         />
     })
 
@@ -43,8 +43,12 @@ import { LinearGradient } from 'expo';
 
     }
 
+    next(){
+      this.props.navigation.navigate('Journal', {userInfo: this.state})
+    }
+
     componentDidMount(){
-      let userInfo = this.props.navigate.getParam('userInfo');
+      let userInfo = this.props.navigation.getParam('userInfo');
       this.setState({
         userid: userInfo.userid,
         value: userInfo.value,
@@ -77,7 +81,7 @@ import { LinearGradient } from 'expo';
           </View>
 
           <View style={{justifyContent: "center", alignItems: 'center',}}>
-            <TouchableOpacity style={styles.nextButton}>
+            <TouchableOpacity style={styles.nextButton} onPress={this.next.bind(this)}>
 
               <Text style={styles.nextText}>
                 Next

@@ -6,7 +6,9 @@ import SurveyScreen from "./Components/initialSurvey";
 import HomeScreen from "./Components/howareyou";
 import GridScreen from "./Components/grid";
 import EmotionsScreen from "./Components/emotions";
-import JournalScreen from "./Components/journal";
+import JournalScreen from "./Components/Journal";
+
+
 import SuggestionsScreen from "./Components/suggestions";
 import HomePageScreen from "./Components/homePageScreen";
 
@@ -63,7 +65,7 @@ export default StackNavigator({
   HomePage: {
     screen: HomePageScreen
   }
-}, {initialRouteName: 'Emotions'});
+}, {initialRouteName: 'Login'});
 
 
 const styles = StyleSheet.create({

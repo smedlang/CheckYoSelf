@@ -37,6 +37,7 @@ export default class LoginScreen extends React.Component {
     .then(response => response.json())
     .then(json => {
       if (json.userid){
+        console.log('userInfo', json.userid);
         this.setState({
           userid: json.userid
         });

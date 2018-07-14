@@ -63,7 +63,7 @@ export default class ShowNewlog extends React.Component{
   }
 
   componentDidMount(){
-    let userInfo = this.props.navigate.getParam('userInfo');
+    let userInfo = this.props.navigation.getParam('userInfo');
     this.setState({
       userid: userInfo.userid,
       value: userInfo.value,

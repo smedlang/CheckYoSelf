@@ -32,7 +32,7 @@ import {  StyleSheet,
 
     componentDidMount(){
 
-      let userInfo = this.props.navigate.getParam('userInfo');
+      let userInfo = this.props.navigation.getParam('userInfo');
       let queryUrl = url + '/' + userInfo.userid + '/stats';
 
       return fetch(queryUrl)

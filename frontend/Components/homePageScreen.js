@@ -14,7 +14,7 @@ import {
 } from "react-native"
 import { LinearGradient } from "expo";
 
-export default class Homepage extends React.Component{
+export default class HomePage extends React.Component{
   constructor(){
     super();
     this.state={
@@ -34,7 +34,7 @@ export default class Homepage extends React.Component{
   }
 
   componentDidMount() {
-    let userInfo = this.props.navigate.getParam('userInfo');
+    let userInfo = this.props.navigation.getParam('userInfo');
     let queryUrl = url + '/' + userInfo.userid ;
     return fetch(queryUrl)
     .then(response=> response.json())

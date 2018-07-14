@@ -46,16 +46,18 @@ import {  StyleSheet,
     }
 
     componentDidMount() {
-      let userInfo = this.props.navigate.getParams('userInfo');
+      let userInfo = this.props.navigation.getParam('userInfo');
+      console.log('userInfo', userInfo);
+
+      userInfo && this.setState({
+        userid: userInfo.userid,
+        value: userInfo.value
+      });
 
       this.props.navigation.setParams({
         onRightPress: this.setParents.bind(this)
-      }).then(response=> {
-        this.setState({
-          userid: userInfo.userid,
-          value: userInfo.value
-        });
       })
+
     }
 
     setParents() {
@@ -79,7 +81,7 @@ import {  StyleSheet,
       // console.log('set parent state')
       let arr = Object.keys(obj).map((emotion) => ({'name': emotion, 'intensity': obj[emotion] }))
       if (isPositive) this.setState({positiveArr: arr, positivesSet: true})
-      else this.setState({negativeArr: arr, negativesSet: true}, () => {console.log(this.state)})
+      else this.setState({negativeArr: arr, negativesSet: true})
     }
 
     render() {
@@ -129,7 +131,7 @@ class SubScreen extends React.Component{
     });
     return(
       <View>
-        <LinearGradient style={{height:"100%"}} colors={["#1049cc", "#00B0B0"]}
+        <LinearGradient style={{height:"100%"}} colors={["#1049cc", "#00B0B0"]}>
         <View style={{height: 80}}>
           {this.props.positive ?
             <View style={{alignItems:"center", justifyContent:"center", paddingTop:15}}>
