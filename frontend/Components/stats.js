@@ -24,13 +24,17 @@ import url from './url.js'
         most_used: "",
         most_freq: "",
         total_logs: 0,
-        emo_color: ""
+        emo_color: "",
       }
     }
 
 
     componentDidMount(){
-      return fetch(URL + '/' + this.props.userId + '/stats')
+
+      let userInfo = this.props.navigate.getParam('userInfo');
+      let queryUrl = url + '/' + userInfo.userid + '/stats';
+
+      return fetch(queryUrl)
       .then(response => response.json())
       .then(responseJson => {
         this.setState({
@@ -38,7 +42,8 @@ import url from './url.js'
           reasons: responseJson.topReasons,
           most_used: responseJson.mostUsedSuggestion,
           most_freq: responseJson.mostProductiveActivity,
-          total_logs: responseJson.totalLogs
+          total_logs: responseJson.totalLogs,
+          userid: userInfo.userid
         })
       }).catch(err => res.status(400).json({"error": err}));
       var score = 0;
