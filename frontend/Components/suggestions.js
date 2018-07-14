@@ -13,9 +13,9 @@ import {
 } from "react-native"
 import { LinearGradient } from "expo";
 
-export default class SuggestionsScreen extends React.Compnent {
-  constructor(props){
-    super(props);
+export default class SuggestionsScreen extends React.Component {
+  constructor(){
+    super();
     const ds = new ListView.DataSouce({
       rowHasChanged: (r1, r2) => r1 !== r2
     });

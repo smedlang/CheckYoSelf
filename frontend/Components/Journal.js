@@ -1,6 +1,19 @@
 import React from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  ListView,
+  Alert,
+  Button,
+  RefreshControl,
+  AsyncStorage
+} from "react-native"
+import { LinearGradient } from "expo";
 
-class Journal extends React.Component{
+export default class Journal extends React.Component{
   constructor(props){
     super(props);
 
@@ -11,7 +24,13 @@ class Journal extends React.Component{
   }
 
   skipSection(){
+    Alert.alert(
+      "Great Job!",
+      "Your daily emotions have been logged " ,
+      [{ text: "Done" }] // Button
+    );
     this.props.navigation.navigate('');
+
   }
 
   postJournal(){
@@ -25,63 +44,84 @@ class Journal extends React.Component{
     }).then(response=> response.json())
     .then(json => {
       if (json.status === 200){
-        this.props.navigation.navigate('');
+        Alert.alert(
+          "Great Job!",
+          "Your daily journal has been logged " ,
+          [{ text: "Done" }] // Button
+        );
+        this.props.navigation.navigate('/:userid/suggestions');
       }
     })
   }
 
   render(){
     return (
-      <TextInput
-        placeholder="Write your journal here"
-        onChange={(journal)=> this.setState({
-          journalBody: journal
-        })}/> </TextInput>
-      <Button
-        onPress={()=> this.skipSection()}
-        title="Skip"
-      />
-      <Button
-        onPress={()=> this.postJournal()}
-        title="Post"
-      />
-    );
+      <View>
+        <LinearGradient style={{height:"100%"}} colors={["#7fd64d", "#4dd6ba"]} >
+          <View>
+            <Text style={{fontFamily:"Cochin"}}>Daily Journal</Text>
+          </View>
+          <View style={{alignItems: "center"}}>
+            <TextInput
+              placeholder="Write your journal here"
+              onChange={(journal)=> this.setState({
+                journalBody: journal
+              })
+            }/>
+          </View>
+          <View style={{alignItems: "center", flexDirection: "row", justifyContent: "space-between"}}>
+            <TouchableOpacity>
+              <Button
+                onPress={()=> this.skipSection()}
+                title="Skip"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Button
+                onPress={()=> this.postJournal()}
+                title="Post"
+              />
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
+        </View>
+      );
+    }
+
+
+
+
   }
 
-
-
-
-}
-
-const styles = StyleSheet.create({
-  container: {
-    //paddingTop:100,
-    flex: 1,
-    backgroundColor: '#d6f2c6',
-    //alignItems: 'center',
-    //justifyContent: 'center'
-  },
-  button: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    paddingTop: 5,
-    paddingBottom: 5,
-    marginTop: 5,
-    borderRadius: 15,
-    borderWidth: 1,
-    backgroundColor: 'white',
-    width: 120,
-    height: 35
-  },
-  buttonLabel: {
-    textAlign: 'center',
-    fontSize: 12
-  },
-  nav: {
-    height: "25%", width: 200,
-    //justifyContent: 'left',
-    paddingLeft: 15,
-    //alignSelf: "flex-start"
-  }
-});
+  const styles = StyleSheet.create({
+    container: {
+      //paddingTop:100,
+      flex: 1,
+      backgroundColor: '#d6f2c6',
+      //alignItems: 'center',
+      //justifyContent: 'center'
+    },
+    button: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'stretch',
+      paddingTop: 5,
+      paddingBottom: 5,
+      marginTop: 5,
+      borderRadius: 15,
+      borderWidth: 1,
+      backgroundColor: 'white',
+      width: 120,
+      height: 35
+    },
+    buttonLabel: {
+      textAlign: 'center',
+      fontSize: 12
+    },
+    nav: {
+      height: "25%", width: 200,
+      //justifyContent: 'left',
+      paddingLeft: 15,
+      //alignSelf: "flex-start"
+    }
+  });
