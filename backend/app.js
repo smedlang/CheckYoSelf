@@ -9,6 +9,39 @@ var User = Models.User;
 var DailyLog = Models.DailyLog;
 var initialSuggestions = require('./initialSuggestions').initialSuggestions;
 
+
+  let emotionInfo = [{
+    name: "angry",
+    sum: 0,
+    items: ["angry", "irritated", "frustrated", "annoyed"]
+  },
+  {
+    name: "sad",
+    sum: 0,
+    items: ["depressed", "sad", "empty", "gloomy", "hopeless"]
+  },
+  {
+    name: "anxious",
+    sum: 0,
+    items: ["anxious", "afraid", "worried", "nervous", "panicked"]
+  },
+  {
+    name: "guilt",
+    sum: 0,
+    items: ["guilty", "remorseful", "self-conscious"]
+  },
+  {
+    name: "shame",
+    sum: 0,
+    items: ["shameful", "embarrasesed", "self-conscious"],
+  },
+  {
+    name: "happy",
+    sum: 0,
+    items: ["happy", "excited", "calm", "confident", "content", "grateful", "motivated", "proud", "peaceful", "secure"]
+  },
+];
+
 // console.log(initialSuggestions);
 
 mongoose.connect(process.env.MONGODB_URI);
@@ -28,20 +61,160 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+/**
+  ------------------HELPER FUNCTIONS --------------
+**/
+var hashPassword = (password) => (password + process.env.SECRETHASH );
 
-var removeDups = (arr) => {
-  for (let i=1; i<arr.length; i++){
-    if (arr[i] === arr[i-1]){
-      arr.splice(i-1, 1);
-    }
-  }
+//total logs
+var getLogCount = (userId) => {
+  DailyLog.find({
+    owner: userId
+  })
+  .then(results => {
+    let count = results.length
+    return count;
+  }).catch(err => res.json({'error': err}))
 }
 
-function hashPassword(password){
-  return password + process.env.SECRETHASH;
+//most used suggestion
+var getMostUsedSuggestion = (userId) => {
+  User.findById(userId)
+  .then(user => {
+    let highest = 0;
+    let name = '';
+    user.suggestions.forEach(sug => {
+      if(sug.count > highest){
+        highest = sug.count;
+        name = sug.name;
+      }
+    })
+    return name;
+  }).catch(err => res.json({'error': err}))
 }
 
 
+
+//most frequent detailed emotions
+var getTopEmos = (userId) => {
+  DailyLog.find({
+    owner: userId
+  })
+  .then(logs => {
+    let emos = [];
+    logs.forEach(log => {
+      emos.concat(log.oldDetailedEmotions.name)
+    })
+    counter = {}
+    emos.forEach(function(word) {
+      counter[word] = (counter[word] || 0) + 1;
+    });
+    emos.sort(function(x, y) {
+      return counter[y] - counter[x];
+    });
+    let uniqueEmos = _.unique(emos, true)
+    var topEmos = uniqueEmos.slice(0, 5);
+    return topEmos;
+  }).catch(err => res.json({'error': err}))
+}
+/**
+
+
+
+**/
+//most frequent reasons
+var getTopReasons = (userId) => {
+  DailyLog.find({
+    owner: userId
+  })
+  .then(logs => {
+    let reasons = [];
+    logs.forEach(log => {
+      reasons.concat(log.reasons)
+    })
+    counter = {}
+    reasons.forEach(function(word) {
+      counter[word] = (counter[word] || 0) + 1;
+    });
+    reasons.sort(function(x, y) {
+      return counter[y] - counter[x];
+    });
+    let uniqueReasons = _.unique(reasons, true);
+    let topReasons = uniqueReasons.slice(0, 5);
+    return topReasons;
+  }).catch(err => res.json({'error': err}))
+}
+/**
+
+
+
+
+**/
+//most productive activity
+var getMostProductiveActivity = userId => {
+  let suggestions= [];
+  User.findById(userId)
+  .then(result=> {
+    let sug = result.suggestions;
+    sug.forEach(suggestion => {
+      suggestions.push ({
+        name: sug.name,
+        avgDelta: 0,
+        count: 0
+      });
+    })
+  })
+  .catch(err => console.log(err));
+
+  let happyBlock = motionInfo[emotionInfo.length-1];
+  DailyLog.find({owner: userId})
+  .then(results => {
+    results.forEach(log => {
+      let oldHappySum = 0;
+      let oldNegSum = 0;
+      let oldDelta = 0;
+      let newHappySum = 0;
+      let newNegSum = 0;
+      let newDelta = 0;
+      let ULTIMATE_DELTA = 0;
+      log.oldDetailedEmotions.forEach(emotion => {
+        if (happyBlock.items.includes(emotion)){
+          happySum += emotion.intensity;
+        }else{
+          negSum += emotion.intensity;
+        }
+      })
+
+      log.newDetailedEmotions.forEach(emotion => {
+        if (happyBlock.items.includes(emotion)){
+          happySum += emotion.intensity;
+        }else{
+          negSum += emotion.intensity;
+        }
+      })
+
+      oldDelta = oldHappySum - oldNegSum;
+      newDelta = newHappySum - newNegSum;
+      ULTIMATE_DELTA = newDelta - oldDelta;
+
+      let oldAvg = suggestions[log.name].avgDelta * suggestions[log.name].count;
+      suggestions[log.name].count++;
+
+      suggestions[log.name].avgDelta = (oldAvg + ULTIMATE_DELTA) /suggestions[log.name].count;
+    })
+  })
+
+  suggestions.sort((a,b) =>
+    b.avgDelta - a.avgDelta
+  });
+
+  return suggestions[0].name;
+
+}
+
+/**
+  ---------------END HELPER FUNCTIONS --------------
+**/
 
 /**
 - TESTED
@@ -149,89 +322,19 @@ app.get('/:userid/dailyLogs', (req, res)=> {
 
 //stats to show: total number of logs
 app.get('/:userid/stats', (req, res)=> {
+
   // most used suggestions DONE
   // total logs DONE
   // most frequent detailed emotions selected (top 5) DONE
   // most productive activity (best delta per activity)
-  // most frequent life aspects affecting your emotions
+          //find all logs for userId
+          //sort by activity name
+          //
+  // most frequent life aspects affecting your emotions DONE
 });
 
 
 //total logs
-var getLogCount = (userId) => {
-  DailyLog.find({
-    owner: userId
-  })
-  .then(results => {
-    let count = results.length
-    return count;
-  }).catch(err => res.json({'error': err}))
-}
-
-//most used suggestion
-var getMostUsedSuggestion = (userId) => {
-  User.findById(userId)
-  .then(user => {
-    let highest = 0;
-    let name = '';
-    user.suggestions.forEach(sug => {
-      if(sug.count > highest){
-        highest = sug.count;
-        name = sug.name;
-      }
-    })
-    return name;
-  }).catch(err => res.json({'error': err}))
-}
-
-
-//most frequent detailed emotions
-var topEmos = (userId) => {
-  DailyLog.find({
-    owner: userId
-  })
-  .then(logs => {
-    let emos = [];
-    logs.forEach(log => {
-      emos.concat(log.oldDetailedEmotions.name)
-    })
-    counter = {}
-    emos.forEach(function(word) {
-      counter[word] = (counter[word] || 0) + 1;
-    });
-    emos.sort(function(x, y) {
-      return counter[y] - counter[x];
-    });
-    removeDups(emos);
-    var topEmos = emos.slice(0, 5);
-    return topEmos;
-  }).catch(err => res.json({'error': err}))
-}
-
-
-var topReasons = (userId) => {
-  DailyLog.find({
-    owner: userId
-  })
-  .then(logs => {
-    let reasons = [];
-    logs.forEach(log => {
-      reasons.concat(log.reasons)
-    })
-    counter = {}
-    reasons.forEach(function(word) {
-      counter[word] = (counter[word] || 0) + 1;
-    });
-    reasons.sort(function(x, y) {
-      return counter[y] - counter[x];
-    });
-    removeDups(reasons);
-    var topReasons = reasons.slice(0, 5);
-    return topReasons;
-  }).catch(err => res.json({'error': err}))
-}
-
-
 
 
 //add suggestion
@@ -360,37 +463,6 @@ app.post('/:userid/newLog', (req, res) => {
   newDailyLog.save(err=> error=err);
   console.log('saved!');
 
-  let emotionInfo = [{
-    name: "angry",
-    sum: 0,
-    items: ["angry", "irritated", "frustrated", "annoyed"]
-  },
-  {
-    name: "sad",
-    sum: 0,
-    items: ["depressed", "sad", "empty", "gloomy", "hopeless"]
-  },
-  {
-    name: "anxious",
-    sum: 0,
-    items: ["anxious", "afraid", "worried", "nervous", "panicked"]
-  },
-  {
-    name: "guilt",
-    sum: 0,
-    items: ["guilty", "remorseful", "self-conscious"]
-  },
-  {
-    name: "shame",
-    sum: 0,
-    items: ["shameful", "embarrasesed", "self-conscious"],
-  },
-  {
-    name: "happy",
-    sum: 0,
-    items: ["happy", "excited", "calm", "confident", "content", "grateful", "motivated", "proud", "peaceful", "secure"]
-  },
-];
 
 //sorting all emotions into the big 5
 oldDetailedEmotions.forEach(emotion => {
