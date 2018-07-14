@@ -10,12 +10,22 @@ import {  StyleSheet,
   RefreshControl,
   AsyncStorage } from 'react-native';
   import { LinearGradient } from 'expo';
+  import { StackNavigator } from 'react-navigation';
   import { Slider } from 'react-native-elements';
   import Swiper from 'react-native-swiper'
 
   export default class EmotionsScreen extends React.Component{
-    constructor(){
-      super();
+
+    static navigationOptions = ({ navigation }) => ({
+      headerRight:
+        <Button
+          title="Submit"
+          onPress={ () => {navigation.state.params.onRightPress()} }
+        />
+    })
+
+    constructor(props){
+      super(props);
       this.state = {
         positiveEmotions: ['happy', 'excited', 'hopeful', 'calm', 'confident',
         'content', 'grateful', 'motivated', 'proud', 'peaceful', 'secure'],
@@ -31,9 +41,17 @@ import {  StyleSheet,
       }
     }
 
+    componentDidMount() {
+      this.props.navigation.setParams({
+        onRightPress: this.setParents.bind(this)
+      })
+    }
+
     setParents() {
+      console.log("setParents")
       if (this.state.positivesSet && this.state.negativesSet) {
         let finalArr = this.state.positiveArr.concat(this.state.negativeArr)
+        console.log('setparents', finalArr)
         //fetch post based
       }
       else { //user clicked all done without finishing both
@@ -42,11 +60,10 @@ import {  StyleSheet,
     }
 
     setParentState(obj, isPositive) {
+      // console.log('set parent state')
       let arr = Object.keys(obj).map((emotion) => ({'name': emotion, 'intensity': obj[emotion] }))
-      if (isPositive) this.setState({positiveArr: arr, positivesSet: true}, () => {console.log(this.state)})
-      else this.setState({negativeArr: arr, negativesSet: true})
-      console.log('set parent state')
-
+      if (isPositive) this.setState({positiveArr: arr, positivesSet: true})
+      else this.setState({negativeArr: arr, negativesSet: true}, () => {console.log(this.state)})
     }
 
     render() {
@@ -62,9 +79,11 @@ import {  StyleSheet,
       </View> */
       )
     }
+
   }
 
 class SubScreen extends React.Component{
+
   constructor(props) {
     super(props);
     let newObj = new Object();
