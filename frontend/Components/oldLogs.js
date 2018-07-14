@@ -1,4 +1,5 @@
 import React from 'react';
+import url from './url';
 import { StyleSheet, Text, View, Animated, TextInput, Button, ListView, Image, TouchableOpacity } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { StackNavigator } from 'react-navigation';

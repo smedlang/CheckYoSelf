@@ -44,11 +44,6 @@ export default class LoginScreen extends React.Component {
       }
     })
 
-    Alert.alert(
-  "Login",
-  "Login button pressed!" + this.state.username,
-  [{ text: "yay" }] // Button
-);
   }
   //good
   register(){
@@ -59,6 +54,7 @@ export default class LoginScreen extends React.Component {
       <View >
          <LinearGradient style={{height: "100%"}} colors={["#80d64d", "#f5f558"]} > {/*caea54 */}
         <Text style={styles.textBig}>You Good?</Text>
+        <View style={{alignItems:"center", justifyContent:"center"}}>
         <TextInput
           style={{
             margin: 15,
@@ -75,13 +71,14 @@ export default class LoginScreen extends React.Component {
             margin: 15,
             width: 300,
             height: 40,
-            borderColor: "#97ad8a",
+            borderColor: "white",
             borderWidth: 2
           }}
           placeholder=" Password"
           onChangeText={text => this.setState({ password: text })}
         />
-        <View style={{alignItems: "center", borderWidth: 2}}>
+      </View>
+        <View style={{alignItems: "center", justifyContent:"center"}}>
         <TouchableOpacity
           onPress={() => {
             this.login();
@@ -113,6 +110,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textBig: {
+    color:"white",
     fontSize: 36,
     textAlign: 'center',
     margin: 10,
@@ -120,18 +118,18 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
-    alignSelf: 'stretch',
-    paddingTop: 10,
-    paddingBottom: 10,
-    marginTop: 10,
+    padding: 10,
+    margin: 10,
     borderRadius: 5,
     borderWidth: 1,
     backgroundColor: 'white',
     width: 200
   },
   buttonLabel: {
+    fontFamily:"Cochin",
+    color:"white",
     textAlign: 'center',
-    fontSize: 20
+    fontSize: 25
   },
 
 

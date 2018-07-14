@@ -1,4 +1,5 @@
 import React from 'react';
+import url from './url';
 import {  StyleSheet,
   View,
   Text,
