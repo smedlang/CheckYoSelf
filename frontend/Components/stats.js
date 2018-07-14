@@ -1,4 +1,6 @@
 import React from 'react';
+import url from './url.js';
+
 import {  StyleSheet,
   View,
   Text,
@@ -13,7 +15,6 @@ import {  StyleSheet,
   import { Slider } from 'react-native-elements';
   //import CircularSlider from "react-native-circular-slider"
   //"react-native" link "react-native-svg"
-import url from './url.js'
 
   export default class HomeScreen extends React.Component {
     constructor() {

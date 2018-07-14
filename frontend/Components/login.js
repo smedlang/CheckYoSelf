@@ -44,11 +44,6 @@ export default class LoginScreen extends React.Component {
       }
     })
 
-    Alert.alert(
-  "Login",
-  "Login button pressed!" + this.state.username,
-  [{ text: "yay" }] // Button
-);
   }
   //good
   register(){

@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import LoginScreen from "./Components/login";
 import RegisterScreen from "./Components/register";
 import SurveyScreen from "./Components/initialSurvey";
-import HomeScreen from "./Components/home";
+import HomeScreen from "./Components/howareyou";
 import GridScreen from "./Components/grid";
 import EmotionsScreen from "./Components/emotions";
 import JournalScreen from "./Components/journal";
