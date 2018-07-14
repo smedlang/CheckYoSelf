@@ -12,15 +12,15 @@ var userSchema = mongoose.Schema({
   currentEmotionColor: {
     type: Number,
     public: Boolean
-  },          //will have same value as most recent Emotion Color
+  },                              //will have same value as most recent Emotion Color
   suggestions: [{
     name: String,
     description: String,
     count: Number,
     score: Number,
     tags: []
-  }],                      //will be filled with Suggestion objects
-  friends: []                           //will be filled with Friend objects (that contain User objects)
+  }],                             //will be filled with Suggestion objects
+  friends: []                      //will be filled with Friend objects (that contain User objects)
 });
 
 userSchema.plugin(friends());
@@ -32,7 +32,7 @@ var dailyLogSchema = mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     required: true,
     ref: "User"
-  },                          //User who owns this log
+  },                             //User who owns this log
   journalBody: String,
   emotionColor: Number,
   reasons: [],
@@ -43,7 +43,7 @@ var dailyLogSchema = mongoose.Schema({
   oldDetailedEmotions: [{
     name: String,
     intensity: Number
-  }],               //will be filled with objects for each emotion (name, intensity)
+  }],                           //will be filled with objects for each emotion (name, intensity)
   completedSuggestion: String,
   creationTime: Date
 });
