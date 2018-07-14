@@ -1,4 +1,5 @@
 import React from 'react';
+import url from './url';
 import {
   StyleSheet,
   View,
@@ -16,17 +17,35 @@ import { LinearGradient } from "expo";
 export default class Homepage extends React.Component{
   constructor(){
     super();
-    this.state={}
+    this.state={
+      name: '',
+      username: ''
+    }
   }
   toNew(){
-    this.props.navigation.navigate("Home");
+    this.props.navigation.navigate("Home", {userInfo: this.state});
   }
   toOld(){
-    this.props.navigation.navigate("Old");
+    this.props.navigation.navigate("Old", {userInfo: this.state});
   }
   toLog(){
-    this.props.navigation.navigate("Stats")
+    this.props.navigation.navigate("Stats", {userInfo: this.state});
   }
+
+  componentDidMount() {
+    let userInfo = this.props.navigate.getParam('userInfo');
+    let queryUrl = url + '/' + userInfo.userid ;
+    return fetch(queryUrl)
+    .then(response=> response.json())
+    .then(json => {
+      this.setState({
+        name: json.name,
+        username: json.username,
+        userid: userInfo.userid
+      });
+    })
+  }
+
   render(){
     return(
       <View>

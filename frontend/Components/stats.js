@@ -13,7 +13,7 @@ import {  StyleSheet,
   import { Slider } from 'react-native-elements';
   //import CircularSlider from "react-native-circular-slider"
   //"react-native" link "react-native-svg"
-import URL from './url.js'
+import url from './url.js'
 
   export default class HomeScreen extends React.Component {
     constructor() {
@@ -30,7 +30,7 @@ import URL from './url.js'
 
 
     componentDidMount(){
-      fetch(URL + '/' + this.props.userId + '/stats')
+      return fetch(URL + '/' + this.props.userId + '/stats')
       .then(response => response.json())
       .then(responseJson => {
         this.setState({

@@ -1,4 +1,5 @@
 import React from 'react';
+import url from './url';
 import {  StyleSheet,
   View,
   Text,
@@ -17,18 +18,40 @@ export default class LoginScreen extends React.Component {
     super(props);
     this.state={
       username: "",
-      password: ""
+      password: "",
+      userid: ''
     }
   }
   login(){
+    let queryUrl = url + '/login';
+    return fetch(queryUrl, {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username: this.state.username,
+        password: this.state.password,
+      })
+    })
+    .then(response => response.json())
+    .then(json => {
+      if (json.userid){
+        this.setState({
+          userid: json.userid
+        });
+        this.props.navigation.navigate('HomePage', {userInfo: this.state});
+      }
+    })
+
     Alert.alert(
   "Login",
   "Login button pressed!" + this.state.username,
   [{ text: "yay" }] // Button
 );
   }
+  //good
   register(){
-
     this.props.navigation.navigate('Register');
   }
   render() {
