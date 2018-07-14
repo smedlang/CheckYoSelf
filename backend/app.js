@@ -26,7 +26,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-
+function hashPassword(password){
+  return password + process.env.SECRETHASH;
+}
 
 
 
@@ -40,7 +42,7 @@ app.post('/register', (req, res)=> {
   let username = req.body.username;
 
   //need to hash this
-  let password = req.body.password;
+  let password = hashPassword(req.body.password);
   let email = req.body.email;
   let phoneNumber = req.body.phoneNumber;
 
@@ -83,7 +85,7 @@ app.post('/login', (req, res)=> {
 
   User.findOne({username: username})
   .then(result=> {
-    if (result.password === password){
+    if (result.password === hashPassword(password)){
       console.log('id', result._id);
       res.json({"status": 200});
     }
@@ -219,7 +221,6 @@ app.post('/:userid/reEvaluate', (req, res)=> {
       }
     })
   })
-  .
   // Suggestion.find({
   //   owner: req.params.userid,
   //   name: req.body.completedSuggestion
@@ -401,8 +402,10 @@ app.post('/:userid/friendRequestAccept', (req, res) => {
 
 app.get('/:userid/getFriends', (req, res) => {
   User.findById(req.params.userid)
-  .then((doc) => res.json({"friends": doc.friends})
-  .catch((err) => console.log(err))
+  .then((doc) => res.json({"friends": doc.friends}))
+  .catch(err => res.json({
+    "error": err
+  }))
 })
 
 
@@ -413,7 +416,7 @@ app.get('/:userid/getFriends', (req, res) => {
 app.post('/:userid/removeFriend', (req, res) => {
   User.removeFriend(req.params.userid, req.body.friendId)
   .then((doc) => res.json({"friend": doc}))
-  .catch((err) => res.json({"error": err}))
+  .catch(err => res.json({"error": err}))
 })
 
 app.listen(3000);
