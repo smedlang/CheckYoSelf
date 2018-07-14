@@ -8,41 +8,8 @@ var Models = require('./models');
 var User = Models.User;
 var DailyLog = Models.DailyLog;
 var initialSuggestions = require('./initialSuggestions').initialSuggestions;
+var emotionInfo = require('./emotionInfo').emotionInfo;
 
-
-  let emotionInfo = [{
-    name: "angry",
-    sum: 0,
-    items: ["angry", "irritated", "frustrated", "annoyed"]
-  },
-  {
-    name: "sad",
-    sum: 0,
-    items: ["depressed", "sad", "empty", "gloomy", "hopeless"]
-  },
-  {
-    name: "anxious",
-    sum: 0,
-    items: ["anxious", "afraid", "worried", "nervous", "panicked"]
-  },
-  {
-    name: "guilt",
-    sum: 0,
-    items: ["guilty", "remorseful", "self-conscious"]
-  },
-  {
-    name: "shame",
-    sum: 0,
-    items: ["shameful", "embarrasesed", "self-conscious"],
-  },
-  {
-    name: "happy",
-    sum: 0,
-    items: ["happy", "excited", "calm", "confident", "content", "grateful", "motivated", "proud", "peaceful", "secure"]
-  },
-];
-
-// console.log(initialSuggestions);
 
 mongoose.connect(process.env.MONGODB_URI);
 
