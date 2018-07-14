@@ -9,7 +9,7 @@ var User = Models.User;
 var DailyLog = Models.DailyLog;
 var initialSuggestions = require('./initialSuggestions').initialSuggestions;
 
-console.log(initialSuggestions);
+// console.log(initialSuggestions);
 
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -58,7 +58,8 @@ app.post('/register', (req, res)=> {
         name: name,
         username: username,
         password: password,
-        suggestions: initialSuggestions
+        suggestions: initialSuggestions,
+        friends: []
       });
 
       newUser.save()
@@ -171,9 +172,6 @@ app.post('/:userid/addSuggestion', (req, res) => {
     res.json({"status": 200});
   }).catch(err => res.json({'error': err}))
 })
-
-
-
 
 
 
@@ -391,14 +389,11 @@ app.post('/:userid/friendRequestSend', (req, res) => {
 
 
 app.post('/:userid/friendRequestAccept', (req, res) => {
-  User.findOne({name: req.body.name})
-  .then((result) => User.requestFriend(result._id, req.params.userid))
-  .then(() => User.findById(req.params.userid))
-  .then((result) => User.getFriends(result))
-  .then((result) => {
-    var friends = result.filter(user => user.status === "accepted")
-    User.findByIdAndUpdate(req.params.userid, {friends: friends})
-  }).catch((err) => console.log(err))
+  User.findOne({username: req.body.username})
+   .then((result) => {
+     User.requestFriend(req.params.userid, result._id)})
+   .then(() => res.json("request sent"))
+   .catch((err) => console.log(err))
 })
 
 
@@ -408,10 +403,12 @@ app.post('/:userid/friendRequestAccept', (req, res) => {
 
 app.get('/:userid/getFriends', (req, res) => {
   User.findById(req.params.userid)
-  .then((doc) => res.json({"friends": doc.friends}))
-  .catch(err => res.json({
-    "error": err
-  }))
+   .then((result) => {
+     console.log(result);
+     result.getAcceptedFriends()})
+   .then((result) => {
+     console.log(result)
+   }).catch((err) => console.log(err))
 })
 
 
