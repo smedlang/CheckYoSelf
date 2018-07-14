@@ -57,7 +57,6 @@ export default class RegisterScreen extends React.Component {
             userid: json.userid
           })
           this.props.navigation.navigate('Survey', {userInfo: this.state});
-
         })
       }
     })
