@@ -116,6 +116,9 @@ app.get('/:userid', (req, res)=> {
 
 
 
+/** Tested
+
+**/
 
 //finds dailyLogs by UserId, and returns all of them
 app.get('/:userid/dailyLogs', (req, res)=> {
@@ -135,23 +138,60 @@ app.get('/:userid/dailyLogs', (req, res)=> {
 
 //stats to show: total number of logs
 app.get('/:userid/stats', (req, res)=> {
-
+  // most used suggestions
+  // total logs
+  // most frequent detailed emotions selected (top 5)
+  // most productive activity (best delta per activity)
+  //
 });
 
 
 
+//add suggestion
+app.post('/:userid/addSuggestion', (req, res) => {
+  let userid = req.params.userid;
+  let name = req.body.name;
+  let description = req.body.description;
+  let tags = req.body.tags;
+
+  User.findbyId(userid)
+  .then(user => {
+    let sugs = user.suggestions;
+    sugs.push({
+      name: name,
+      description: description,
+      count: 1,
+      score: 1,
+      tags: tags
+    })
+  }).catch(err => res.json({'error': err}))
+})
 
 
 
-app.get('/:userid/feed', (req, res)=> {
-
-});
 
 
 
 
+//delete suggestion
+app.post('/:userid/deleteSuggestion', (req, res) => {
+  let suggestionToDelete = req.body.suggestion;
+  let userid = req.params.userid;
+
+  User.findById(userid)
+  .then(result => {
+    results.suggestions = results.suggestions.filter(sug => sug.name !== suggestionToDelete)
+  }).catch(err=> res.json({"error": err}));
+})
 
 
+
+
+
+
+
+
+//
 app.post('/:userid/reEvaluate', (req, res)=> {
 
   //saving new detailed emotions to contrast with the old detailed emotions in Daily Log
@@ -325,7 +365,10 @@ if (!wantSuggestion){
 
 
 
-
+//friend stuff
+//
+//
+//
 app.post('/:userid/friendRequestSend', (req, res) => {
   console.log('in friend request send')
   User.findOne({name: req.body.name, phoneNumber: req.body.phoneNumber})
