@@ -245,7 +245,7 @@ app.post('/login', (req, res)=> {
   .then(result=> {
     if (result.password === hashPassword(password)){
       console.log('id', result._id);
-      res.json({"status": 200});
+      res.json({"userid": result._id});
     }
   })
   .catch(err => res.status(400).json({"error": err}));
