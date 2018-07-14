@@ -174,6 +174,7 @@ var getMostUsedSuggestion = (userId) => {
   }).catch(err => res.json({'error': err}))
 }
 
+
 //most frequent detailed emotions
 var gotEmoCounts = (userId) => {
   DailyLog.find({
