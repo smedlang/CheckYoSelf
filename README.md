@@ -1,6 +1,6 @@
 # Head Smart
 
-App aimed for users to track their daily mental health
+App aimed for users to track and improve daily mental health
 
 1. log feelings and emotions each day
 2. our app suggests activities to do to improve upon mental health
